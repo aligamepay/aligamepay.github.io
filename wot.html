@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Продажа аккаунта World of Tanks</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #1e1e1e;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #2e2e2e;
+      padding: 20px;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 20px;
+      background-color: #2a2a2a;
+      border-radius: 10px;
+    }
+    .section {
+      margin-bottom: 30px;
+    }
+    h2 {
+      color: #ffa500;
+      border-bottom: 1px solid #444;
+      padding-bottom: 5px;
+    }
+    .stats, .vehicles, .resources {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+    .stat-item, .vehicle-item, .resource-item {
+      background-color: #3a3a3a;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .description {
+      background-color: #3a3a3a;
+      padding: 15px;
+      border-radius: 8px;
+      line-height: 1.6;
+    }
+    .screenshots {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+    }
+    .screenshots img {
+      width: 200px;
+      border-radius: 8px;
+      border: 2px solid #444;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .screenshots img:hover {
+      transform: scale(1.05);
+    }
+    .back-button {
+      display: block;
+      width: fit-content;
+      margin: 30px auto 0;
+      padding: 10px 20px;
+      background-color: #ffa500;
+      color: #000;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 6px;
+      transition: background-color 0.3s;
+    }
+    .back-button:hover {
+      background-color: #e69500;
+    }
+
+    .hangar-vehicles {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .tank-card {
+      background-color: #222;
+      border: 1px solid #555;
+      border-radius: 8px;
+      width: 180px;
+      overflow: hidden;
+      box-shadow: 0 0 8px rgba(255, 165, 0, 0.3);
+      transition: transform 0.2s;
+    }
+
+    .tank-card:hover {
+      transform: scale(1.03);
+    }
+
+    .tank-image {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      border-bottom: 1px solid #444;
+    }
+
+    .tank-info {
+      padding: 10px;
+      text-align: center;
+    }
+
+    .tank-name {
+      font-weight: bold;
+      color: #ffa500;
+      margin-bottom: 5px;
+    }
+
+    .tank-stats {
+      font-size: 14px;
+      color: #ccc;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Премиум аккаунт World of Tanks</h1>
+  </header>
+
+  <div class="container">
+
+    <section class="section">
+      <h2>Статистика</h2>
+      <div class="stats">
+        <div class="stat-item">Победы: 58%</div>
+        <div class="stat-item">Боев: 14,500</div>
+        <div class="stat-item">WN8: 2450</div>
+        <div class="stat-item">Средний урон: 2100</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Техника</h2>
+      <div class="hangar-vehicles">
+        <div class="tank-card">
+          <img src="https://tanksblitz.org/_next/image?url=https%3A%2F%2Fserver.tanksblitz.org%2Fuploads%2Fkv_1s_mz_3f4a820872.png&w=640&q=100" alt="KB-1C" class="tank-image">
+          <div class="tank-info">
+            <div class="tank-name">КВ-1С с М3</div>
+          </div>
+        </div>
+        <div class="tank-card">
+          <img src="tank_t1.jpg" alt="T1 Heavy" class="tank-image">
+          <div class="tank-info">
+            <div class="tank-name">T1 Heavy Tank</div>
+          </div>
+        </div>
+        <div class="tank-card">
+          <img src="tank_gabler.jpg" alt="Gabler's Destroyer" class="tank-image">
+          <div class="tank-info">
+            <div class="tank-name">Gabler's Destroyer</div>
+          </div>
+        </div>
+        <div class="tank-card">
+          <img src="https://wxpcdn-cbprodretail.gcdn.co/dcont/tankopedia/usa/A134_M24E2_SuperChaffee_preview.png" alt="Super Chaffee" class="tank-image">
+          <div class="tank-info">
+            <div class="tank-name">M24E2 Super Chaffee</div>
+          </div>
+        </div>
+        <div class="tank-card">
+          <img src="https://wxpcdn-cbprodretail.gcdn.co/dcont/tankopedia/usa/A10_M6_preview.png" alt="M6" class="tank-image">
+          <div class="tank-info">
+            <div class="tank-name">M6</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Ресурсы</h2>
+      <div class="resources">
+        <div class="resource-item">Золото: 12,000</div>
+        <div class="resource-item">Кредиты: 5,600,000</div>
+        <div class="resource-item">Свободный опыт: 350,000</div>
+        <div class="resource-item">Боны: 4500</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Описание</h2>
+      <div class="description">
+        Аккаунт с высоким WN8, большим количеством топовой техники и большим запасом ресурсов.
+        Идеально подойдет для комфортной игры на высоких уровнях. Есть премиум, множество камуфляжей
+        и редких стилей. Привязка к почте отключена, данные передаются сразу после покупки.
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Скриншоты</h2>
+      <div class="screenshots">
+        <img src="https://images.wallpaperscraft.ru/image/single/les_voda_gory_47230_1920x1080.jpg" alt="Скриншот 1">
+        <img src="https://cs9.pikabu.ru/post_img/big/2020/05/12/9/1589296658161898679.jpg" alt="Скриншот 2">
+        <img src="screenshot3.jpg" alt="Скриншот 3">
+      </div>
+    </section>
+
+    <a href="назад.html" class="back-button">Вернуться к товару</a>
+  </div>
+
+  <!-- Модальное окно -->
+  <div id="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; z-index:1000;">
+    <span style="position:absolute; top:20px; right:30px; font-size:40px; color:white; cursor:pointer;" id="modal-close">&times;</span>
+    <img id="modal-img" src="" style="max-width:90%; max-height:90%; border-radius:10px; box-shadow:0 0 15px rgba(255,255,255,0.3);">
+  </div>
+
+  <script>
+    const modal = document.getElementById("modal");
+    const modalImg = document.getElementById("modal-img");
+    const modalClose = document.getElementById("modal-close");
+    const screenshots = document.querySelectorAll(".screenshots img");
+
+    screenshots.forEach(img => {
+      img.addEventListener("click", () => {
+        modal.style.display = "flex";
+        modalImg.src = img.src;
+      });
+    });
+
+    modalClose.onclick = () => modal.style.display = "none";
+    modal.onclick = (e) => {
+      if (e.target === modal) modal.style.display = "none";
+    };
+  </script>
+
+</body>
+</html>
