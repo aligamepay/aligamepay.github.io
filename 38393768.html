@@ -2,244 +2,182 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Продажа аккаунта World of Tanks</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #1e1e1e;
-      color: #fff;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background-color: #2e2e2e;
-      padding: 20px;
-      text-align: center;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 28px;
-    }
-    .container {
-      max-width: 1000px;
-      margin: 30px auto;
-      padding: 20px;
-      background-color: #2a2a2a;
-      border-radius: 10px;
-    }
-    .section {
-      margin-bottom: 30px;
-    }
-    h2 {
-      color: #ffa500;
-      border-bottom: 1px solid #444;
-      padding-bottom: 5px;
-    }
-    .stats, .vehicles, .resources {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 15px;
-      margin-top: 15px;
-    }
-    .stat-item, .vehicle-item, .resource-item {
-      background-color: #3a3a3a;
-      padding: 10px;
-      border-radius: 8px;
-      text-align: center;
-    }
-    .description {
-      background-color: #3a3a3a;
-      padding: 15px;
-      border-radius: 8px;
-      line-height: 1.6;
-    }
-    .screenshots {
-      display: flex;
-      gap: 10px;
-      overflow-x: auto;
-      padding-bottom: 10px;
-    }
-    .screenshots img {
-      width: 200px;
-      border-radius: 8px;
-      border: 2px solid #444;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-    .screenshots img:hover {
-      transform: scale(1.05);
-    }
-    .back-button {
-      display: block;
-      width: fit-content;
-      margin: 30px auto 0;
-      padding: 10px 20px;
-      background-color: #ffa500;
-      color: #000;
-      text-decoration: none;
-      font-weight: bold;
-      border-radius: 6px;
-      transition: background-color 0.3s;
-    }
-    .back-button:hover {
-      background-color: #e69500;
-    }
-
-    .hangar-vehicles {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      margin-top: 15px;
-    }
-
-    .tank-card {
-      background-color: #222;
-      border: 1px solid #555;
-      border-radius: 8px;
-      width: 180px;
-      overflow: hidden;
-      box-shadow: 0 0 8px rgba(255, 165, 0, 0.3);
-      transition: transform 0.2s;
-    }
-
-    .tank-card:hover {
-      transform: scale(1.03);
-    }
-
-    .tank-image {
-      width: 100%;
-      height: 100px;
-      object-fit: cover;
-      border-bottom: 1px solid #444;
-    }
-
-    .tank-info {
-      padding: 10px;
-      text-align: center;
-    }
-
-    .tank-name {
-      font-weight: bold;
-      color: #ffa500;
-      margin-bottom: 5px;
-    }
-
-    .tank-stats {
-      font-size: 14px;
-      color: #ccc;
-      line-height: 1.4;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WOT Статистика</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-zinc-900 text-white font-sans min-h-screen p-6">
+  <div class="max-w-7xl mx-auto space-y-8">
 
-  <header>
-    <h1>Премиум аккаунт World of Tanks</h1>
-  </header>
+    <!-- Заголовок -->
+    <div class="text-center">
+      <h1 class="text-4xl font-extrabold">
+        Лот <a href="https://example.com/lot/38393768" class="text-blue-400 hover:underline">#38393768</a> — Статистика Аккаунта
+      </h1>
+      <p class="text-sm text-gray-400 mt-2">Аккаунт создан: 07.12.2015 • Страна регистрации: Германия</p>
+    </div>
 
-  <div class="container">
-
-    <section class="section">
-      <h2>Статистика</h2>
-      <div class="stats">
-        <div class="stat-item">Победы: 58%</div>
-        <div class="stat-item">Боев: 14,500</div>
-        <div class="stat-item">WN8: 2450</div>
-        <div class="stat-item">Средний урон: 2100</div>
+    <!-- Ресурсы -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 bg-gray-800 rounded-2xl p-6 text-center shadow-lg">
+      <div>
+        <p class="text-sm text-gray-400">Золото</p>
+        <p class="text-2xl font-bold">12,000</p>
       </div>
-    </section>
+      <div>
+        <p class="text-sm text-gray-400">Кредиты</p>
+        <p class="text-2xl font-bold">5,600,000</p>
+      </div>
+      <div>
+        <p class="text-sm text-gray-400">Свободный опыт</p>
+        <p class="text-2xl font-bold">350,000</p>
+      </div>
+      <div>
+        <p class="text-sm text-gray-400">Боны</p>
+        <p class="text-2xl font-bold">4,500</p>
+      </div>
+    </div>
 
-    <section class="section">
-      <h2>Техника</h2>
-      <div class="hangar-vehicles">
-        <div class="tank-card">
-          <img src="https://tanksblitz.org/_next/image?url=https%3A%2F%2Fserver.tanksblitz.org%2Fuploads%2Fkv_1s_mz_3f4a820872.png&w=640&q=100" alt="KB-1C" class="tank-image">
-          <div class="tank-info">
-            <div class="tank-name">КВ-1С с М3</div>
+    <!-- Рейтинг -->
+    <div class="bg-gradient-to-r from-purple-700 to-purple-900 rounded-2xl p-6 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="text-center md:text-left">
+        <h2 class="text-xl font-semibold">WOT Рейтинг</h2>
+        <p class="text-5xl font-extrabold text-yellow-400 mt-2">9 767</p>
+      </div>
+
+      <div class="flex justify-center">
+        <a href="https://example.com/buy" class="bg-yellow-400 text-black font-semibold py-2 px-6 rounded-full shadow hover:bg-yellow-300 transition">
+          Вернуться к покупке на FunPay
+        </a>
+      </div>
+
+      <img src="https://eu-wotp.wgcdn.co/static/6.4.4_4daec5/wotp_static/img/user_profile/frontend/scss/img/wtr_icons/legend_2.webp" class="w-20 h-20 rounded-full border-4 border-yellow-400" alt="WOT Emblem">
+    </div>
+
+    <!-- Основная статистика -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div class="bg-gray-800 p-4 rounded-xl text-center shadow">
+        <p class="text-sm text-gray-400">Средний Урон за бой</p>
+        <h3 class="text-3xl font-bold">1 673</h3>
+        <p class="text-xs mt-1">Максимум: 11 243</p>
+      </div>
+      <div class="bg-gray-800 p-4 rounded-xl text-center shadow">
+        <p class="text-sm text-gray-400">Средний Опыт за бой</p>
+        <h3 class="text-3xl font-bold">790</h3>
+        <p class="text-xs mt-1">Максимум: 3 531</p>
+      </div>
+      <div class="bg-gray-800 p-4 rounded-xl text-center shadow">
+        <p class="text-sm text-gray-400">Боёв</p>
+        <h3 class="text-3xl font-bold">157</h3>
+        <p class="text-xs mt-1 winrate">
+          <span class="text-white">Побед:</span>
+          <span id="winrate-value">78.7%</span>
+        </p>
+      </div>
+      <div class="bg-gray-800 p-4 rounded-xl text-center shadow">
+        <p class="text-sm text-gray-400">WN8</p>
+        <h3 class="text-3xl font-bold"><span class="wn8">4204</span></h3>
+      </div>
+    </div>
+
+    <!-- Техника в ангаре -->
+    <div>
+      <h2 class="text-xl font-semibold mb-4">Техника в ангаре</h2>
+      <div class="flex flex-wrap gap-4">
+        <!-- Пример танка -->
+        <div class="bg-gray-800 p-3 rounded-lg text-center shadow w-32">
+          <img src="https://static.wikia.nocookie.net/wot-blitz5232/images/d/d4/T-34-85_In-Game_Icon.png/revision/latest?cb=20240722182128" class="w-full h-20 object-cover rounded mb-2" alt="T-34-85">
+          <p class="text-sm">T-34-85</p>
+        </div>
+        <!-- Повторите для других -->
+      </div>
+    </div>
+
+    <!-- Вкладки -->
+    <div>
+      <div class="flex space-x-2 bg-gray-800 p-1 rounded-2xl mb-4">
+        <button class="tab-btn flex-1 py-2 px-4 rounded-lg text-sm font-medium bg-yellow-400 text-black shadow active-tab" onclick="showTab(event, 'equipment')">Оборудование</button>
+        <button class="tab-btn flex-1 py-2 px-4 rounded-lg text-sm font-medium text-gray-300 hover:bg-gray-700" onclick="showTab(event, 'reserves')">Резервы</button>
+        <button class="tab-btn flex-1 py-2 px-4 rounded-lg text-sm font-medium text-gray-300 hover:bg-gray-700" onclick="showTab(event, 'blueprints')">Чертежи</button>
+      </div>
+
+      <div id="equipment" class="tab-content">
+        <div class="flex flex-wrap gap-4">
+          <div class="bg-gray-800 p-3 rounded-lg text-center shadow w-24">
+            <img src="https://lh3.googleusercontent.com/proxy/8_wKEbhqDpuucWqBXdRRWJhgsUUwfgm8dTkIwksxiBJi-oQ7uPy9uhg0JrDcixbjcR8eFRrVnz46PIwI5mbUaWQXwpHicLEC1qA" class="w-12 mx-auto mb-1" alt="Оптика">
+            <p class="text-sm">Трофейная оптика</p>
           </div>
         </div>
-        <div class="tank-card">
-          <img src="tank_t1.jpg" alt="T1 Heavy" class="tank-image">
-          <div class="tank-info">
-            <div class="tank-name">T1 Heavy Tank</div>
-          </div>
-        </div>
-        <div class="tank-card">
-          <img src="tank_gabler.jpg" alt="Gabler's Destroyer" class="tank-image">
-          <div class="tank-info">
-            <div class="tank-name">Gabler's Destroyer</div>
-          </div>
-        </div>
-        <div class="tank-card">
-          <img src="https://wxpcdn-cbprodretail.gcdn.co/dcont/tankopedia/usa/A134_M24E2_SuperChaffee_preview.png" alt="Super Chaffee" class="tank-image">
-          <div class="tank-info">
-            <div class="tank-name">M24E2 Super Chaffee</div>
-          </div>
-        </div>
-        <div class="tank-card">
-          <img src="https://wxpcdn-cbprodretail.gcdn.co/dcont/tankopedia/usa/A10_M6_preview.png" alt="M6" class="tank-image">
-          <div class="tank-info">
-            <div class="tank-name">M6</div>
-          </div>
-        </div>
       </div>
-    </section>
-
-    <section class="section">
-      <h2>Ресурсы</h2>
-      <div class="resources">
-        <div class="resource-item">Золото: 12,000</div>
-        <div class="resource-item">Кредиты: 5,600,000</div>
-        <div class="resource-item">Свободный опыт: 350,000</div>
-        <div class="resource-item">Боны: 4500</div>
+      <div id="reserves" class="tab-content hidden">
+        <p class="text-gray-300">Список резервов отсутствует.</p>
       </div>
-    </section>
-
-    <section class="section">
-      <h2>Описание</h2>
-      <div class="description">
-        Аккаунт с высоким WN8, большим количеством топовой техники и большим запасом ресурсов.
-        Идеально подойдет для комфортной игры на высоких уровнях. Есть премиум, множество камуфляжей
-        и редких стилей. Привязка к почте отключена, данные передаются сразу после покупки.
+      <div id="blueprints" class="tab-content hidden">
+        <p class="text-gray-300">Список чертежей отсутствует.</p>
       </div>
-    </section>
+    </div>
 
-    <section class="section">
-      <h2>Скриншоты</h2>
-      <div class="screenshots">
-        <img src="https://images.wallpaperscraft.ru/image/single/les_voda_gory_47230_1920x1080.jpg" alt="Скриншот 1">
-        <img src="https://cs9.pikabu.ru/post_img/big/2020/05/12/9/1589296658161898679.jpg" alt="Скриншот 2">
-        <img src="screenshot3.jpg" alt="Скриншот 3">
+    <!-- Скриншоты -->
+    <div>
+      <h2 class="text-xl font-semibold mb-4">Скриншоты</h2>
+      <div class="flex flex-wrap gap-4">
+        <img src="https://worldoftanks.eu/dcont/fb/image/2560x1600-5.jpg" alt="Скриншот 1" class="w-32 h-20 object-cover rounded cursor-pointer hover:opacity-75" onclick="openModal(this.src)">
+        <img src="https://via.placeholder.com/150" alt="Скриншот 2" class="w-32 h-20 object-cover rounded cursor-pointer hover:opacity-75" onclick="openModal(this.src)">
       </div>
-    </section>
+    </div>
 
-    <a href="назад.html" class="back-button">Вернуться к товару</a>
+    <!-- Модалка -->
+    <div id="modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-50">
+      <img id="modal-img" src="" class="max-h-[90%] max-w-[90%] rounded shadow-lg">
+      <button class="absolute top-4 right-4 text-white text-3xl font-bold" onclick="closeModal()">×</button>
+    </div>
+
   </div>
 
-  <!-- Модальное окно -->
-  <div id="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; z-index:1000;">
-    <span style="position:absolute; top:20px; right:30px; font-size:40px; color:white; cursor:pointer;" id="modal-close">&times;</span>
-    <img id="modal-img" src="" style="max-width:90%; max-height:90%; border-radius:10px; box-shadow:0 0 15px rgba(255,255,255,0.3);">
-  </div>
-
+  <!-- Скрипты -->
   <script>
-    const modal = document.getElementById("modal");
-    const modalImg = document.getElementById("modal-img");
-    const modalClose = document.getElementById("modal-close");
-    const screenshots = document.querySelectorAll(".screenshots img");
+    function getColorByWinrate(percent) {
+      if (percent <= 45) return 'text-red-500';
+      if (percent <= 49) return 'text-orange-500';
+      if (percent <= 53) return 'text-yellow-400';
+      if (percent <= 57) return 'text-green-500';
+      if (percent <= 63) return 'text-cyan-400';
+      return 'text-purple-500';
+    }
 
-    screenshots.forEach(img => {
-      img.addEventListener("click", () => {
-        modal.style.display = "flex";
-        modalImg.src = img.src;
-      });
+    function getColorByWN8(wn8) {
+      if (wn8 <= 449) return 'text-red-500';
+      if (wn8 <= 849) return 'text-orange-500';
+      if (wn8 <= 1249) return 'text-yellow-400';
+      if (wn8 <= 1899) return 'text-green-500';
+      if (wn8 <= 2799) return 'text-cyan-400';
+      return 'text-purple-500';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const winrateEl = document.querySelector('.winrate');
+      const match = winrateEl?.textContent.match(/([\d.]+)%/);
+      if (match) winrateEl.classList.add(getColorByWinrate(parseFloat(match[1])));
+
+      const wn8El = document.querySelector('.wn8');
+      if (wn8El) wn8El.classList.add(getColorByWN8(parseInt(wn8El.textContent)));
     });
 
-    modalClose.onclick = () => modal.style.display = "none";
-    modal.onclick = (e) => {
-      if (e.target === modal) modal.style.display = "none";
-    };
+    function openModal(src) {
+      document.getElementById('modal-img').src = src;
+      document.getElementById('modal').classList.remove('hidden');
+    }
+    function closeModal() {
+      document.getElementById('modal').classList.add('hidden');
+    }
+    function showTab(event, tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(el => {
+        el.classList.remove('bg-yellow-400', 'text-black', 'active-tab');
+        el.classList.add('text-gray-300', 'hover:bg-gray-700');
+      });
+      document.getElementById(tabId).classList.remove('hidden');
+      event.target.classList.add('bg-yellow-400', 'text-black', 'active-tab');
+    }
   </script>
-
 </body>
 </html>
