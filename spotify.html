@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сброс пароля Spotify</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+            background-color: #fff;
+            color: #222;
+            max-width: 720px;
+            margin: 40px auto;
+            padding: 0 16px;
+            line-height: 1.7;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 18px;
+            margin: 12px 0;
+        }
+
+        ol {
+            font-size: 18px;
+            padding-left: 22px;
+        }
+
+        li {
+            margin-bottom: 18px;
+            position: relative;
+        }
+
+        a {
+            color: #1db954;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .link-box {
+            background-color: #f6f6f6;
+            padding: 14px 16px;
+            border-radius: 8px;
+            font-size: 17px;
+            margin-top: 20px;
+            border: 1px solid #e2e2e2;
+        }
+
+        .link-box a {
+            font-weight: bold;
+            color: #1db954;
+        }
+
+        /* Значок вопроса */
+        .tooltip {
+            display: inline-block;
+            margin-left: 6px;
+            color: #1db954;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .tooltip:hover::after {
+            content: "Нажмите, чтобы открыть скриншот";
+            position: absolute;
+            top: -28px;
+            left: 0;
+            background-color: #222;
+            color: #fff;
+            padding: 4px 8px;
+            font-size: 13px;
+            border-radius: 6px;
+            white-space: nowrap;
+            opacity: 0.9;
+        }
+
+        /* Лайтбокс (popup) */
+        .lightbox {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            padding-top: 40px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+        }
+
+        .lightbox-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 85%;
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+            animation: zoom 0.25s ease;
+        }
+
+        @keyframes zoom {
+            from {transform: scale(0.8);}
+            to {transform: scale(1);}
+        }
+
+        /* Кнопка закрытия */
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #fff;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .close:hover {
+            color: #1db954;
+        }
+    </style>
+</head>
+<body>
+    <h1>Сброс пароля Spotify</h1>
+
+    <p>Иногда при входе с нового устройства или IP-адреса может возникнуть ошибка.
+       Решить её просто — сбросьте пароль на новый.</p>
+
+    <ol>
+        <li>
+            Перейдите по ссылке для сброса.
+            <span class="tooltip" onclick="openLightbox('https://i.ibb.co/8nLgyyPG/AB581117-8035-431-A-90-BE-1977-A7-E770-DC.png')">(?)</span>
+        </li>
+        <li>
+            Введите свой e-mail.
+            <span class="tooltip" onclick="openLightbox('https://i.ibb.co/hJ97tdPP/0056-A959-1274-4-AAC-8-C27-951-DD18-ED6-C2.png')">(?)</span>
+        </li>
+        <li>
+            На почту придёт письмо со ссылкой.
+            <span class="tooltip" onclick="openLightbox('https://i.ibb.co/Psdysdr6/934-F6-BE0-4-C57-414-E-AC48-E1-DC19-A5-CB9-B.png')">(?)</span>
+        </li>
+        <li>
+            Откройте её и установите новый пароль.
+            <span class="tooltip" onclick="openLightbox('https://i.ibb.co/qLZ7CZMS/ED0-D6-B09-89-BC-4363-9729-93-E717-EFF9-DF.png')">(?)</span>
+        </li>
+    </ol>
+
+    <div class="link-box">
+        🔗 Ссылка для сброса пароля:  
+        <a href="https://accounts.spotify.com/ru/password-reset" target="_blank">
+            https://accounts.spotify.com/ru/password-reset
+        </a>
+    </div>
+
+    <!-- Лайтбокс -->
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <span class="close" onclick="closeLightbox()">&times;</span>
+        <img class="lightbox-content" id="lightbox-img" alt="Скриншот">
+    </div>
+
+    <script>
+        function openLightbox(src) {
+            document.getElementById("lightbox-img").src = src;
+            document.getElementById("lightbox").style.display = "block";
+        }
+
+        function closeLightbox() {
+            document.getElementById("lightbox").style.display = "none";
+        }
+    </script>
+</body>
+</html>
