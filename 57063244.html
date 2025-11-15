@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>World of Tanks — Демонстрация аккаунта</title>
+  <meta name="color-scheme" content="dark light" />
+  <style>
+    :root{--bg:#0f1724;--muted:#9aa4b2;--accent:#ffcc00;--glass:rgba(255,255,255,0.06)}
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;background:linear-gradient(180deg,#071022 0%,#081426 60%);color:#e6eef8;-webkit-font-smoothing:antialiased}
+    .container{max-width:1100px;margin:32px auto;padding:0 20px}
+
+    /* Header */
+    header{display:flex;align-items:center;gap:16px}
+    .logo{width:72px;height:72px;border-radius:12px;background:linear-gradient(135deg,#17324a,#0d1a26);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--accent);font-size:22px;letter-spacing:.5px;user-select:none}
+    h1{margin:0;font-size:22px;line-height:1.25}
+
+    /* Gallery */
+    .gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+    @media (max-width:1100px){.gallery{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:640px){.gallery{grid-template-columns:1fr}}
+    .thumb{position:relative;border-radius:10px;overflow:hidden;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03)}
+    .thumb img{display:block;width:100%;height:auto;object-fit:cover;cursor:pointer;transition:transform .25s ease}
+    .thumb:hover img{transform:scale(1.02)}
+
+    /* Lightbox */
+    .lightbox{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(3,6,10,0.85);z-index:50;padding:20px}
+    .lightbox.open{display:flex}
+    .stage{max-width:1100px;max-height:90vh;width:100%;display:flex;align-items:center;gap:16px}
+    .stage img{max-width:calc(100% - 120px);max-height:90vh;object-fit:contain;border-radius:10px;box-shadow:0 8px 30px rgba(2,6,23,0.7)}
+    .meta{flex:1;min-width:260px;color:var(--muted)}
+    .meta h2{margin:0 0 8px;font-size:18px;color:#e6eef8}
+    .meta p{margin:6px 0}
+    .controls{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+    .btn{background:transparent;border:1px solid rgba(255,255,255,0.08);padding:8px 12px;border-radius:8px;color:inherit;cursor:pointer}
+    .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+    .nav-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.25);border:1px solid rgba(255,255,255,0.25);color:#fff;padding:12px;border-radius:50%;cursor:pointer}
+    .nav-btn.left{left:18px}
+    .nav-btn.right{right:18px}
+    .nav-btn:focus-visible{outline:2px solid var(--accent)}
+
+    /* Button Back */
+    .back-btn{display:block;width:fit-content;margin:26px auto 0;padding:12px 24px;background-color:var(--accent);color:#000;font-weight:600;border-radius:8px;text-decoration:none;transition:background-color 0.25s ease}
+    .back-btn:hover{background-color:#ffdb4d}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header aria-label="Заголовок страницы">
+      <div class="logo" aria-hidden="true">EU</div>
+      <h1>Лот #57063244 — Статистика Аккаунта Wargaming World Of Tanks</h1>
+    </header>
+<a href="https://funpay.com/lots/offer?id=57063244" class="back-btn">Вернуться к покупке</a>
+<section class="gallery" aria-label="Галерея скриншотов">
+  <div class="thumb">
+    <img src="https://i.ibb.co/J92NG2t/1.jpg" data-index="1" alt="Общая статистика" data-title="1/7" loading="lazy"/>
+  </div>
+  <div class="thumb">
+    <img src="https://i.ibb.co/DDWhWh1b/2.jpg" data-index="2" alt="Ангар" data-title="2/7" loading="lazy"/>
+  </div>
+  <div class="thumb">
+    <img src="https://i.ibb.co/SC2FKwJ/3.jpg" data-index="3" alt="Статистика: Техника" data-title="3/7" loading="lazy"/>
+  </div>
+  <div class="thumb">
+    <img src="https://i.ibb.co/9H8JDCrh/4.jpg" data-index="4" alt="Статистика: Показатели" data-title="4/7" loading="lazy"/>
+  </div>
+  <div class="thumb">
+    <img src="https://i.ibb.co/RT17GZt5/5.jpg" data-index="5" alt="Склад: Запасы" data-title="5/7" loading="lazy"/>
+  </div>
+  <div class="thumb">
+    <img src="https://i.ibb.co/84cC1S1j/6.jpg" data-index="6" alt="Склад: Чертежи" data-title="6/7" loading="lazy"/>
+  </div>
+  <div class="thumb">
+    <img src="https://i.ibb.co/NfXxwYV/7.jpg" data-index="7" alt="Склад: Резервы" data-title="7/7" loading="lazy"/>
+  </div>
+</section>
+
+
+    
+  </div>
+
+  <!-- Лайтбокс -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Просмотр скриншотов">
+    <button class="nav-btn left" id="prevBtn" aria-label="Предыдущий">◀</button>
+    <div class="stage">
+      <img id="lightboxImg" src="" alt="" />
+      <div class="meta">
+        <h2 id="imgTitle">Заголовок</h2>
+        <p id="imgIndex">1 / 7</p>
+        <div class="controls">
+          <button class="btn" id="downloadBtn" type="button">Полный размер</button>
+          <button class="btn" id="closeBtn" type="button">Закрыть</button>
+        </div>
+      </div>
+    </div>
+    <button class="nav-btn right" id="nextBtn" aria-label="Следующий">▶</button>
+  </div>
+
+  <script>
+    (function(){
+      const thumbs = Array.from(document.querySelectorAll('.thumb img'));
+      const lightbox = document.getElementById('lightbox');
+      const lbImg = document.getElementById('lightboxImg');
+      const imgTitle = document.getElementById('imgTitle');
+      const imgIndex = document.getElementById('imgIndex');
+      const closeBtn = document.getElementById('closeBtn');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      let current = 0;
+      let touchX = null;
+
+      function openAt(i){
+        const t = thumbs[i];
+        if(!t) return;
+        lbImg.src = t.src;
+        lbImg.alt = t.alt || 'Изображение';
+        imgTitle.textContent = t.dataset.title || t.alt || 'Изображение';
+        imgIndex.textContent = (i+1) + ' / ' + thumbs.length;
+        lightbox.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        current = i;
+        [i-1, i+1].forEach(idx=>{ const n = (idx+thumbs.length)%thumbs.length; const pre = new Image(); pre.src = thumbs[n].src; });
+      }
+
+      function close(){
+        lightbox.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+
+      thumbs.forEach((t, i)=> t.addEventListener('click', ()=> openAt(i)));
+      closeBtn.addEventListener('click', close);
+      downloadBtn.addEventListener('click', ()=>{ const a=document.createElement('a'); a.href=lbImg.src; a.target='_blank'; a.rel='noopener'; a.click(); });
+      prevBtn.addEventListener('click', ()=> openAt((current-1+thumbs.length)%thumbs.length));
+      nextBtn.addEventListener('click', ()=> openAt((current+1)%thumbs.length));
+
+      document.addEventListener('keydown', (e)=>{
+        if(!lightbox.classList.contains('open')) return;
+        if(e.key==='ArrowLeft') prevBtn.click();
+        if(e.key==='ArrowRight') nextBtn.click();
+        if(e.key==='Escape') close();
+      });
+
+      lightbox.addEventListener('click', (e)=>{ if(e.target === lightbox) close(); });
+
+      lightbox.addEventListener('touchstart', (e)=>{ touchX = e.touches[0].clientX; }, {passive:true});
+      lightbox.addEventListener('touchend', (e)=>{ if(touchX==null) return; const dx = e.changedTouches[0].clientX - touchX; if(Math.abs(dx)>40){ dx>0 ? prevBtn.click() : nextBtn.click(); } touchX=null; });
+    })();
+  </script>
+</body>
+</html>
