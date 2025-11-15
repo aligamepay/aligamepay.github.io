@@ -1,0 +1,83 @@
+:root {
+  --bg: #0f1724;
+  --muted: #9aa4b2;
+  --accent: #ffcc00;
+  --glass: rgba(255,255,255,0.06);
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
+  background: linear-gradient(180deg, #071022 0%, #081426 60%);
+  color: #e6eef8;
+}
+
+.container { max-width: 1100px; margin: 32px auto; padding: 0 20px; }
+
+/* Header */
+header { display: flex; align-items: center; gap: 16px; }
+.logo {
+  width: 72px; height: 72px; border-radius: 12px;
+  background: linear-gradient(135deg,#17324a,#0d1a26);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--accent); font-size: 22px; font-weight: 700;
+}
+h1 { margin: 0; font-size: 22px; }
+
+/* Gallery */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 18px;
+}
+@media (max-width: 1100px) { .gallery { grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 640px) { .gallery { grid-template-columns: 1fr; } }
+
+.thumb { position: relative; border-radius: 10px; overflow: hidden; background: rgba(255,255,255,0.03); }
+.thumb img { width: 100%; cursor: pointer; transition: transform .25s ease; }
+.thumb:hover img { transform: scale(1.02); }
+
+/* Lightbox */
+.lightbox {
+  position: fixed; inset: 0; display: none;
+  align-items: center; justify-content: center;
+  background: rgba(3,6,10,0.85); z-index: 50; padding: 20px;
+}
+.lightbox.open { display: flex; }
+
+.stage { max-width: 1100px; max-height: 90vh; display: flex; gap: 16px; }
+.stage img {
+  max-width: calc(100% - 120px); max-height: 90vh;
+  object-fit: contain; border-radius: 10px;
+}
+
+.meta { min-width: 260px; color: var(--muted); }
+.meta h2 { margin: 0 0 8px; color: #fff; }
+
+.btn {
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 8px 12px; border-radius: 8px;
+  background: transparent; color: inherit; cursor: pointer;
+}
+
+.nav-btn {
+  position: absolute; top: 50%;
+  padding: 12px; border-radius: 50%;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.25);
+  cursor: pointer; color: #fff;
+}
+.nav-btn.left { left: 18px; }
+.nav-btn.right { right: 18px; }
+
+/* Back Button */
+.back-btn {
+  display: block; width: fit-content; margin: 26px auto 0;
+  padding: 12px 24px; border-radius: 8px;
+  background-color: var(--accent); color: #000;
+  font-weight: 600; text-decoration: none;
+}
