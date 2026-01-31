@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Offer 52619005</title>
+
+<style>
+:root{
+  --bg:#0b0d12;
+  --panel:#141821;
+  --panel-soft:#1b2030;
+  --accent:#f5b84c;
+  --text:#eef0f4;
+  --muted:#9aa0ad;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(1200px 500px at 20% -10%, rgba(245,184,76,.12), transparent 60%),
+    radial-gradient(800px 400px at 90% 10%, rgba(80,120,255,.12), transparent 60%),
+    var(--bg);
+}
+
+.app{max-width:1200px;margin:0 auto;padding:20px}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px
+}
+
+h1{margin:0;font-size:26px;font-weight:800}
+
+.lang{display:flex;gap:6px}
+.lang button{
+  background:var(--panel);
+  color:var(--text);
+  border:1px solid transparent;
+  padding:6px 10px;
+  border-radius:8px;
+  cursor:pointer;
+}
+.lang button.active{
+  border-color:var(--accent);
+  color:var(--accent)
+}
+
+.topbar{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:18px
+}
+
+.search{flex:1;min-width:220px}
+.search input{
+  width:100%;
+  padding:14px 16px;
+  border-radius:var(--radius);
+  border:1px solid transparent;
+  background:var(--panel);
+  color:var(--text);
+  font-size:15px;
+  outline:none
+}
+.search input:focus{border-color:var(--accent)}
+
+.counter{
+  align-self:center;
+  font-size:14px;
+  color:var(--muted)
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:14px
+}
+
+.card{
+  background:linear-gradient(180deg,var(--panel),var(--panel-soft));
+  border-radius:var(--radius);
+  padding:16px;
+  cursor:pointer;
+  transition:.15s ease
+}
+.card:hover{transform:translateY(-2px)}
+.card span{font-weight:600;font-size:15px;color:var(--accent)}
+
+.pager{
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  margin-top:20px;
+  flex-wrap:wrap
+}
+.pager button{
+  background:var(--panel);
+  color:var(--text);
+  border:1px solid transparent;
+  padding:8px 12px;
+  border-radius:8px;
+  cursor:pointer
+}
+.pager button.active{
+  border-color:var(--accent);
+  color:var(--accent)
+}
+
+.toast{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:#000;
+  color:var(--accent);
+  padding:10px 14px;
+  border-radius:10px;
+  opacity:0;
+  transform:translateY(10px);
+  transition:.25s ease
+}
+.toast.show{
+  opacity:1;
+  transform:none
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header>
+    <h1 id="title"></h1>
+    <div class="lang">
+      <button data-lang="ru">RU</button>
+      <button data-lang="ua">UA</button>
+      <button data-lang="en">EN</button>
+    </div>
+  </header>
+
+  <div class="topbar">
+    <div class="search">
+      <input id="search" />
+    </div>
+    <div class="counter" id="counter"></div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+  <div class="pager" id="pager"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const UI={
+  ru:{
+    title:"🟫ДВЕ Х НА ВЫБОР🟫🅾️0 боёв | 🪙 1000 Золота | 💰6млн.| 🌍EU |",
+    search:"Поиск техники…",
+    copied:"Скопировано",
+    shown:(a,b)=>`Показано ${a} из ${b}`
+  },
+  ua:{
+    title:"🟫ДВІ Х НА ВИБІР🟫🅾️0 боїв | 🪙 1000 Золота | 💰6млн.| 🌍EU |",
+    search:"Пошук техніки…",
+    copied:"Скопійовано",
+    shown:(a,b)=>`Показано ${a} з ${b}`
+  },
+  en:{
+    title:"🟫TWO X TO CHOOSE FROM🟫🅾️0 battles | 🪙 1000 Gold | 💰6 mil| 🌍EU |",
+    search:"Search vehicles…",
+    copied:"Copied",
+    shown:(a,b)=>`Showing ${a} of ${b}`
+  }
+};
+
+const DATA=[
+{ru:"B-C 25 t + Foch B", ua:"B-C 25 t + Foch B", en:"B-C 25 t + Foch B"},
+{ru:"WZ-111 5A + WZ-132-1", ua:"WZ-111 5A + WZ-132-1", en:"WZ-111 5A + WZ-132-1"},
+{ru:"Maus + Leopard 1", ua:"Maus + Leopard 1", en:"Maus + Leopard 1"},
+{ru:"VZ-55 + TVP T 50/51", ua:"VZ-55 + TVP T 50/51", en:"VZ-55 + TVP T 50/51"},
+{ru:"T92 + Объект 261", ua:"T92 + Объект 261", en:"T92 + Объект 261"},
+{ru:"G.W. E 100 + T92", ua:"G.W. E 100 + T92", en:"G.W. E 100 + T92"},
+{ru:"B-C 155 58 + Conqueror GC", ua:"B-C 155 58 + Conqueror GC", en:"B-C 155 58 + Conqueror GC"},
+{ru:"WZ-111 5A + 121", ua:"WZ-111 5A + 121", en:"WZ-111 5A + 121"},
+{ru:"Rhm. Pzw + E 100", ua:"Rhm. Pzw + E 100", en:"Rhm. Pzw + E 100"},
+{ru:"Rhm. Pzw + Leopard 1", ua:"Rhm. Pzw + Leopard 1", en:"Rhm. Pzw + Leopard 1"},
+{ru:"ИС-7 + Leopard 1", ua:"ИС-7 + Leopard 1", en:"IS-7 + Leopard 1"},
+{ru:"Rhm. Pzw + Maus", ua:"Rhm. Pzw + Maus", en:"Rhm. Pzw + Maus"},
+{ru:"T110E5 + Grille 15", ua:"T110E5 + Grille 15", en:"T110E5 + Grille 15"},
+{ru:"Объект 430У + Объект 277", ua:"Объект 430У + Объект 277", en:"Object 430У + Object 277"},
+{ru:"Canopener + Rhm. Pzw", ua:"Canopener + Rhm. Pzw", en:"Canopener + Rhm. Pzw"},
+{ru:"Rinoceronte + Minotauro", ua:"Rinoceronte + Minotauro", en:"Rinoceronte + Minotauro"},
+{ru:"Type 5 H + Ho-Ri 3", ua:"Type 5 H + Ho-Ri 3", en:"Type 5 H + Ho-Ri 3"},
+{ru:"Concept 5 + Manticore", ua:"Concept 5 + Manticore", en:"Concept 5 + Manticore"},
+{ru:"AMX M4 54 + Foch B", ua:"AMX M4 54 + Foch B", en:"AMX M4 54 + Foch B"},
+{ru:"FV 4005 + S. Conqueror", ua:"FV 4005 + S. Conqueror", en:"FV 4005 + S. Conqueror"},
+{ru:"Jg. Pz E 100 + Pz.Kpfw. VII", ua:"Jg. Pz E 100 + Pz.Kpfw. VII", en:"Jg. Pz E 100 + Pz.Kpfw. VII"},
+{ru:"VZ-55 + Progetto 65", ua:"VZ-55 + Progetto 65", en:"VZ-55 + Progetto 65"},
+{ru:"T110E3 + M48 Patton", ua:"T110E3 + M48 Patton", en:"T110E3 + M48 Patton"},
+{ru:"Объект 430У + ИС-7", ua:"Объект 430У + ИС-7", en:"Object 430У + ИС-7"},
+{ru:"Объект 268 + Объект 268/4", ua:"Объект 268 + Объект 268/4", en:"Object 268 + Object 268/4"},
+{ru:"Type 5 H + STB 1", ua:"Type 5 H + STB 1", en:"Type 5 H + STB 1"},
+{ru:"E 100 + E 50 M", ua:"E 100 + E 50 M", en:"E 100 + E 50 M"},
+{ru:"Т-100 ЛТ + Rhm. Pzw", ua:"Т-100 ЛТ + Rhm. Pzw", en:"Т-100 LT + Rhm. Pzw"},
+{ru:"T110E5 + Leopard 1", ua:"T110E5 + Leopard 1", en:"T110E5 + Leopard 1"},
+{ru:"S.Conqueror + Badger", ua:"S.Conqueror + Badger", en:"S.Conqueror + Badger"},
+{ru:"Объект 268/4 + Объект 277", ua:"Объект 268/4 + Объект 277", en:"Object 268/4 + Object 277"},
+{ru:"S.Conqueror + Centurion AX", ua:"S.Conqueror + Centurion AX", en:"S.Conqueror + Centurion AX"},
+{ru:"AMX 50 B + B-C 25 t", ua:"AMX 50 B + B-C 25 t", en:"AMX 50 B + B-C 25 t"},
+{ru:"Maus + E 100", ua:"Maus + E 100", en:"Maus + E 100"},
+{ru:"ИС-7 + B-C 25 t", ua:"ИС-7 + B-C 25 t", en:"IS-7 + B-C 25 t"},
+{ru:"Maus + Grille 15", ua:"Maus + Grille 15", en:"Maus + Grille 15"},
+{ru:"T110E5 + Объект 277", ua:"T110E5 + Объект 277", en:"T110E5 + Object 277"},
+{ru:"Kranvagn + UDES 15/16", ua:"Kranvagn + UDES 15/16", en:"Kranvagn + UDES 15/16"},
+{ru:"T10E3 + T110E4", ua:"T10E3 + T110E4", en:"T10E3 + T110E4"},
+{ru:"T57 Heavy + M-V-Y", ua:"T57 Heavy + M-V-Y", en:"T57 Heavy + M-V-Y"},
+{ru:"60TP + CS-63", ua:"60TP + CS-63", en:"60TP + CS-63"},
+{ru:"Maus + Объект 705A", ua:"Maus + Объект 705A", en:"Maus + Object 705A"},
+{ru:"ИС-7 + M48 Patton", ua:"ИС-7 + M48 Patton", en:"IS-7 + M48 Patton"}
+
+];
+
+let lang="ru";
+let page=1;
+const PER_PAGE=28;
+
+const grid=document.getElementById("grid");
+const pager=document.getElementById("pager");
+const search=document.getElementById("search");
+const counter=document.getElementById("counter");
+const toast=document.getElementById("toast");
+
+function toastShow(text){
+  toast.textContent=text;
+  toast.classList.add("show");
+  setTimeout(()=>toast.classList.remove("show"),1200);
+}
+
+function render(){
+  document.getElementById("title").textContent=UI[lang].title;
+  search.placeholder=UI[lang].search;
+
+  document.querySelectorAll(".lang button").forEach(b=>{
+    b.classList.toggle("active",b.dataset.lang===lang);
+  });
+
+  const q=search.value.toLowerCase();
+  const filtered=DATA.filter(v=>v[lang].toLowerCase().includes(q));
+
+  const pages=Math.max(1,Math.ceil(filtered.length/PER_PAGE));
+  if(page>pages) page=pages;
+
+  const start=(page-1)*PER_PAGE;
+  const list=filtered.slice(start,start+PER_PAGE);
+
+  grid.innerHTML="";
+  list.forEach(v=>{
+    const c=document.createElement("div");
+    c.className="card";
+    c.innerHTML=`<span>${v[lang]}</span>`;
+    c.onclick=()=>{
+      navigator.clipboard.writeText(v[lang]);
+      toastShow(UI[lang].copied);
+    };
+    grid.appendChild(c);
+  });
+
+  pager.innerHTML="";
+  for(let i=1;i<=pages;i++){
+    const b=document.createElement("button");
+    b.textContent=i;
+    if(i===page) b.classList.add("active");
+    b.onclick=()=>{page=i;render()};
+    pager.appendChild(b);
+  }
+
+  counter.textContent =
+    UI[lang].shown(list.length, filtered.length) +
+    ` • ${page}/${pages}`;
+}
+
+search.oninput=()=>{page=1;render()};
+document.querySelectorAll(".lang button").forEach(b=>{
+  b.onclick=()=>{lang=b.dataset.lang;render()};
+});
+
+render();
+</script>
+
+</body>
+</html>

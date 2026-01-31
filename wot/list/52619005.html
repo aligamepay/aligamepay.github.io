@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Offer 52619005</title>
+
+<style>
+:root{
+  --bg:#0b0d12;
+  --panel:#141821;
+  --panel-soft:#1b2030;
+  --accent:#f5b84c;
+  --text:#eef0f4;
+  --muted:#9aa0ad;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(1200px 500px at 20% -10%, rgba(245,184,76,.12), transparent 60%),
+    radial-gradient(800px 400px at 90% 10%, rgba(80,120,255,.12), transparent 60%),
+    var(--bg);
+}
+
+.app{max-width:1200px;margin:0 auto;padding:20px}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px
+}
+
+h1{margin:0;font-size:26px;font-weight:800}
+
+.lang{display:flex;gap:6px}
+.lang button{
+  background:var(--panel);
+  color:var(--text);
+  border:1px solid transparent;
+  padding:6px 10px;
+  border-radius:8px;
+  cursor:pointer;
+}
+.lang button.active{
+  border-color:var(--accent);
+  color:var(--accent)
+}
+
+.topbar{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:18px
+}
+
+.search{flex:1;min-width:220px}
+.search input{
+  width:100%;
+  padding:14px 16px;
+  border-radius:var(--radius);
+  border:1px solid transparent;
+  background:var(--panel);
+  color:var(--text);
+  font-size:15px;
+  outline:none
+}
+.search input:focus{border-color:var(--accent)}
+
+.counter{
+  align-self:center;
+  font-size:14px;
+  color:var(--muted)
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:14px
+}
+
+.card{
+  background:linear-gradient(180deg,var(--panel),var(--panel-soft));
+  border-radius:var(--radius);
+  padding:16px;
+  cursor:pointer;
+  transition:.15s ease
+}
+.card:hover{transform:translateY(-2px)}
+.card span{font-weight:600;font-size:15px;color:var(--accent)}
+
+.pager{
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  margin-top:20px;
+  flex-wrap:wrap
+}
+.pager button{
+  background:var(--panel);
+  color:var(--text);
+  border:1px solid transparent;
+  padding:8px 12px;
+  border-radius:8px;
+  cursor:pointer
+}
+.pager button.active{
+  border-color:var(--accent);
+  color:var(--accent)
+}
+
+.toast{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:#000;
+  color:var(--accent);
+  padding:10px 14px;
+  border-radius:10px;
+  opacity:0;
+  transform:translateY(10px);
+  transition:.25s ease
+}
+.toast.show{
+  opacity:1;
+  transform:none
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header>
+    <h1 id="title"></h1>
+    <div class="lang">
+      <button data-lang="ru">RU</button>
+      <button data-lang="ua">UA</button>
+      <button data-lang="en">EN</button>
+    </div>
+  </header>
+
+  <div class="topbar">
+    <div class="search">
+      <input id="search" />
+    </div>
+    <div class="counter" id="counter"></div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+  <div class="pager" id="pager"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const UI={
+  ru:{
+    title:"🟫ДВЕ Х НА ВЫБОР🟫🅾️0 боёв | 💴15 000 бон |🪙 3500 Золота | 🌍EU |",
+    search:"Поиск техники…",
+    copied:"Скопировано",
+    shown:(a,b)=>`Показано ${a} из ${b}`
+  },
+  ua:{
+    title:"🟫ДВІ Х НА ВИБІР🟫🅾️0 боїв | 💴15 000 бон |🪙 3500 Золота | 🌍EU |",
+    search:"Пошук техніки…",
+    copied:"Скопійовано",
+    shown:(a,b)=>`Показано ${a} з ${b}`
+  },
+  en:{
+    title:"🟫TWO X TO CHOOSE🟫🅾️0 battles | 💴15,000 bonds |🪙 3500 Gold | 🌍EU |",
+    search:"Search vehicles…",
+    copied:"Copied",
+    shown:(a,b)=>`Showing ${a} of ${b}`
+  }
+};
+
+const DATA=[
+ {ru:"E 100 + ИС-7", ua:"E 100 + ИС-7", en:"E 100 + IS-7"},
+{ru:"E 50 M + ИС-7", ua:"E 50 M + ИС-7", en:"E 50 M + ИС-7"},
+{ru:"Leopard 1 + ИС-7", ua:"Leopard 1 + ИС-7", en:"Leopard 1 + IS-7"},
+{ru:"Rhm.Pzw + ИС-7", ua:"Rhm.Pzw + ИС-7", en:"Rhm.Pzw + IS-7"},
+{ru:"Объект 268/4 + ИС-7", ua:"Об'єкт 268/4 + ИС-7", en:"Объект 268/4 + IS-7"},
+{ru:"Объект 268 + ИС-7", ua:"Об'єкт 268 + ИС-7", en:"Object 268 + IS-7"},
+{ru:"Объект 277 + ИС-7", ua:"Об'єкт 277 + ИС-7", en:"Object 277 + IS-7"},
+{ru:"Объект 705А + ИС-7", ua:"Об'єкт 705А + ИС-7", en:"Object 705А + IS-7"},
+{ru:"ИС-4 + ИС-7", ua:"ЙС-4 + ИС-7", en:"ИС-4 + ИС-7"},
+{ru:"СТ-II + ИС-7", ua:"СТ-II + ИС-7", en:"СТ-II + ИС-7"},
+{ru:"Объект 140 + ИС-7", ua:"Об'єкт 140 + ИС-7", en:"Object 140 + IS-7"},
+{ru:"K-91 + ИС-7", ua:"K-91 + ИС-7", en:"K-91 + ИС-7"},
+{ru:"Т-100 ЛТ + ИС-7", ua:"Т-100 ЛТ + ИС-7", en:"Т-100 ЛТ + IS-7"},
+{ru:"T110E3 + ИС-7", ua:"T110E3 + ИС-7", en:"T110E3 + IS-7"},
+{ru:"T110E4 + ИС-7", ua:"T110E4 + ИС-7", en:"T110E4 + IS-7"},
+{ru:"T57 Heavy + ИС-7", ua:"T57 Heavy + ИС-7", en:"T57 Heavy + IS-7"},
+{ru:"Sheridan + ИС-7", ua:"Sheridan + ИС-7", en:"Sheridan + IS-7"},
+{ru:"Foch B + ИС-7", ua:"Foch B + ИС-7", en:"Foch B + IS-7"},
+{ru:"AMX 50 B + ИС-7", ua:"AMX 50 B + ИС-7", en:"AMX 50 B + IS-7"},
+{ru:"AMX M4 54 + ИС-7", ua:"AMX M4 54 + ИС-7", en:"AMX M4 54 + IS-7"},
+{ru:"B-C 25 t + ИС-7", ua:"B-C 25 t + ИС-7", en:"B-C 25 t + IS-7"},
+{ru:"AMX 13 105 + ИС-7", ua:"AMX 13 105 + ИС-7", en:"AMX 13 105 + IS-7"},
+{ru:"EBR 105 + ИС-7", ua:"EBR 105 + ИС-7", en:"EBR 105 + IS-7"},
+{ru:"FV 4005 + ИС-7", ua:"FV 4005 + ИС-7", en:"FV 4005 + IS-7"},
+{ru:"Badger + ИС-7", ua:"Badger + ИС-7", en:"Badger + IS-7"},
+{ru:"S.Conqueror + ИС-7", ua:"S.Conqueror + ИС-7", en:"S.Conqueror + IS-7"},
+{ru:"Canopenner + ИС-7", ua:"Canopenner + ИС-7", en:"Canopenner + IS-7"},
+{ru:"Centurion AX + ИС-7", ua:"Centurion AX + ИС-7", en:"Centurion AX + IS-7"},
+{ru:"Concept 5 + ИС-7", ua:"Concept 5 + ИС-7", en:"Concept 5 + IS-7"},
+{ru:"Manticore + ИС-7", ua:"Manticore + ИС-7", en:"Manticore + IS-7"},
+{ru:"WZ-113GFT + ИС-7", ua:"WZ-113GFT + ИС-7", en:"WZ-113GFT + IS-7"},
+{ru:"BZ-75 + ИС-7", ua:"BZ-75 + ИС-7", en:"BZ-75 + IS-7"},
+{ru:"WZ-111 5A + ИС-7", ua:"WZ-111 5A + ИС-7", en:"WZ-111 5A + IS-7"},
+{ru:"121 + ИС-7", ua:"121 + ИС-7", en:"121 + IS-7"},
+{ru:"WZ-132-1 + ИС-7", ua:"WZ-132-1 + ИС-7", en:"WZ-132-1 + IS-7"},
+{ru:"Ho-Ri 3 + ИС-7", ua:"Ho-Ri 3 + ИС-7", en:"Ho-Ri 3 + IS-7"},
+{ru:"Type 5 H + ИС-7", ua:"Type 5 H + ИС-7", en:"Type 5 H + IS-7"},
+{ru:"STB-1 + ИС-7", ua:"STB-1 + ИС-7", en:"STB-1 + IS-7"},
+{ru:"VZ-55 + ИС-7", ua:"VZ-55 + ИС-7", en:"VZ-55 + IS-7"},
+{ru:"TVP T 50/51 + ИС-7", ua:"TVP T 50/51 + ИС-7", en:"TVP T 50/51 + IS-7"},
+{ru:"Tesak + ИС-7", ua:"Tesak + ИС-7", en:"Tesak + IS-7"},
+{ru:"Blyskawica + ИС-7", ua:"Blyskawica + ИС-7", en:"Blyskawica + IS-7"},
+{ru:"60TP + ИС-7", ua:"60TP + ИС-7", en:"60TP + IS-7"},
+{ru:"CS-63 + ИС-7", ua:"CS-63 + ИС-7", en:"CS-63 + IS-7"},
+{ru:"Kranvagn + ИС-7", ua:"Kranvagn + ИС-7", en:"Kranvagn + IS-7"},
+{ru:"UDES 15/16 + ИС-7", ua:"UDES 15/16 + ИС-7", en:"UDES 15/16 + IS-7"},
+{ru:"Rinoceronte + ИС-7", ua:"Rinoceronte + ИС-7", en:"Rinoceronte + IS-7"},
+{ru:"Progetto 65 + ИС-7", ua:"Progetto 65 + ИС-7", en:"Progetto 65 + IS-7"},
+{ru:"Jg.Pz.E 100 + T110E5", ua:"Jg.Pz.E 100 + T110E5", en:"Jg.Pz.E 100 + T110E5"},
+{ru:"Grille 15 + T110E5", ua:"Grille 15 + T110E5", en:"Grille 15 + T110E5"},
+{ru:"Maus + T110E5", ua:"Maus + T110E5", en:"Maus + T110E5"},
+{ru:"E 100 + T110E5", ua:"E 100 + T110E5", en:"E 100 + T110E5"},
+{ru:"E 50 M + T110E5", ua:"E 50 M + T110E5", en:"E 50 M + T110E5"},
+{ru:"Leopard 1 + T110E5", ua:"Leopard 1 + T110E5", en:"Leopard 1 + T110E5"},
+{ru:"Rhm.Pzw + T110E5", ua:"Rhm.Pzw + T110E5", en:"Rhm.Pzw + T110E5"},
+{ru:"Объект 268/4 + T110E5", ua:"Об'єкт 268/4 + T110E5", en:"Object 268/4 + T110E5"},
+{ru:"Объект 268 + T110E5", ua:"Об'єкт 268 + T110E5", en:"Object 268 + T110E5"},
+{ru:"Объект 277 + T110E5", ua:"Об'єкт 277 + T110E5", en:"Object 277 + T110E5"},
+{ru:"Объект 705А + T110E5", ua:"Об'єкт 705А + T110E5", en:"Object 705А + T110E5"},
+{ru:"ИС-4 + T110E5", ua:"ЙС-4 + T110E5", en:"ИС-4 + T110E5"},
+{ru:"СТ-II + T110E5", ua:"СТ-II + T110E5", en:"СТ-II + T110E5"},
+{ru:"Объект.430У + T110E5", ua:"Об'єкт.430У + T110E5", en:"Object.430У + T110E5"},
+{ru:"Объект 140 + T110E5", ua:"Об'єкт 140 + T110E5", en:"Object 140 + T110E5"},
+{ru:"K-91 + T110E5", ua:"K-91 + T110E5", en:"K-91 + T110E5"},
+{ru:"Т-100 ЛТ + T110E5", ua:"Т-100 ЛТ + T110E5", en:"Т-100 ЛТ + T110E5"},
+{ru:"T110E3 + T110E5", ua:"T110E3 + T110E5", en:"T110E3 + T110E5"},
+{ru:"T110E4 + T110E5", ua:"T110E4 + T110E5", en:"T110E4 + T110E5"},
+{ru:"M-V-Y + T110E5", ua:"M-V-Y + T110E5", en:"M-V-Y + T110E5"},
+{ru:"T57 Heavy + T110E5", ua:"T57 Heavy + T110E5", en:"T57 Heavy + T110E5"},
+{ru:"Sheridan + T110E5", ua:"Sheridan + T110E5", en:"Sheridan + T110E5"},
+{ru:"Foch B + T110E5", ua:"Foch B + T110E5", en:"Foch B + T110E5"},
+{ru:"AMX 50 B + T110E5", ua:"AMX 50 B + T110E5", en:"AMX 50 B + T110E5"},
+{ru:"AMX M4 54 + T110E5", ua:"AMX M4 54 + T110E5", en:"AMX M4 54 + T110E5"},
+{ru:"B-C 25 t + T110E5", ua:"B-C 25 t + T110E5", en:"B-C 25 t + T110E5"},
+{ru:"AMX 13 105 + T110E5", ua:"AMX 13 105 + T110E5", en:"AMX 13 105 + T110E5"},
+{ru:"EBR 105 + T110E5", ua:"EBR 105 + T110E5", en:"EBR 105 + T110E5"},
+{ru:"FV 4005 + T110E5", ua:"FV 4005 + T110E5", en:"FV 4005 + T110E5"},
+{ru:"S.Conqueror + T110E5", ua:"S.Conqueror + T110E5", en:"S.Conqueror + T110E5"},
+{ru:"Canopenner + T110E5", ua:"Canopenner + T110E5", en:"Canopenner + T110E5"},
+{ru:"Centurion AX + T110E5", ua:"Centurion AX + T110E5", en:"Centurion AX + T110E5"},
+{ru:"Concept 5 + T110E5", ua:"Concept 5 + T110E5", en:"Concept 5 + T110E5"},
+{ru:"Manticore + T110E5", ua:"Manticore + T110E5", en:"Manticore + T110E5"},
+{ru:"WZ-113GFT + T110E5", ua:"WZ-113GFT + T110E5", en:"WZ-113GFT + T110E5"},
+{ru:"BZ-75 + T110E5", ua:"BZ-75 + T110E5", en:"BZ-75 + T110E5"},
+{ru:"WZ-111 5A + T110E5", ua:"WZ-111 5A + T110E5", en:"WZ-111 5A + T110E5"},
+{ru:"121 + T110E5", ua:"121 + T110E5", en:"121 + T110E5"},
+{ru:"WZ-132-1 + T110E5", ua:"WZ-132-1 + T110E5", en:"WZ-132-1 + T110E5"},
+{ru:"Ho-Ri 3 + T110E5", ua:"Ho-Ri 3 + T110E5", en:"Ho-Ri 3 + T110E5"},
+{ru:"Type 71 + T110E5", ua:"Type 71 + T110E5", en:"Type 71 + T110E5"},
+{ru:"STB-1 + T110E5", ua:"STB-1 + T110E5", en:"STB-1 + T110E5"},
+{ru:"TVP T 50/51 + T110E5", ua:"TVP T 50/51 + T110E5", en:"TVP T 50/51 + T110E5"},
+{ru:"Tesak + T110E5", ua:"Tesak + T110E5", en:"Tesak + T110E5"},
+{ru:"Blyskawica + T110E5", ua:"Blyskawica + T110E5", en:"Blyskawica + T110E5"},
+{ru:"60TP + T110E5", ua:"60TP + T110E5", en:"60TP + T110E5"},
+{ru:"CS-63 + T110E5", ua:"CS-63 + T110E5", en:"CS-63 + T110E5"},
+{ru:"Strv 103B + T110E5", ua:"Strv 103B + T110E5", en:"Strv 103B + T110E5"},
+{ru:"Kranvagn + T110E5", ua:"Kranvagn + T110E5", en:"Kranvagn + T110E5"},
+{ru:"UDES 15/16 + T110E5", ua:"UDES 15/16 + T110E5", en:"UDES 15/16 + T110E5"},
+{ru:"Minotauro + T110E5", ua:"Minotauro + T110E5", en:"Minotauro + T110E5"},
+{ru:"Rinoceronte + T110E5", ua:"Rinoceronte + T110E5", en:"Rinoceronte + T110E5"},
+{ru:"Progetto 65 + T110E5", ua:"Progetto 65 + T110E5", en:"Progetto 65 + T110E5"},
+{ru:"Jg.Pz.E 100 + M48 Patton", ua:"Jg.Pz.E 100 + M48 Patton", en:"Jg.Pz.E 100 + M48 Patton"},
+{ru:"Grille 15 + M48 Patton", ua:"Grille 15 + M48 Patton", en:"Grille 15 + M48 Patton"},
+{ru:"Maus + M48 Patton", ua:"Maus + M48 Patton", en:"Maus + M48 Patton"},
+{ru:"E 100 + M48 Patton", ua:"E 100 + M48 Patton", en:"E 100 + M48 Patton"},
+{ru:"E 50 M + M48 Patton", ua:"E 50 M + M48 Patton", en:"E 50 M + M48 Patton"},
+{ru:"Leopard 1 + M48 Patton", ua:"Leopard 1 + M48 Patton", en:"Leopard 1 + M48 Patton"},
+{ru:"Rhm.Pzw + M48 Patton", ua:"Rhm.Pzw + M48 Patton", en:"Rhm.Pzw + M48 Patton"},
+{ru:"Объект 268/4 + M48 Patton", ua:"Об'єкт 268/4 + M48 Patton", en:"Object 268/4 + M48 Patton"},
+{ru:"Объект 268 + M48 Patton", ua:"Об'єкт 268 + M48 Patton", en:"Object 268 + M48 Patton"},
+{ru:"Объект 277 + M48 Patton", ua:"Об'єкт 277 + M48 Patton", en:"Object 277 + M48 Patton"},
+{ru:"Объект 705А + M48 Patton", ua:"Об'єкт 705А + M48 Patton", en:"Object 705А + M48 Patton"},
+{ru:"ИС-4 + M48 Patton", ua:"ЙС-4 + M48 Patton", en:"ИС-4 + M48 Patton"},
+{ru:"СТ-II + M48 Patton", ua:"СТ-II + M48 Patton", en:"СТ-II + M48 Patton"},
+{ru:"Объект.430У + M48 Patton", ua:"Об'єкт.430У + M48 Patton", en:"Object.430У + M48 Patton"},
+{ru:"Объект 140 + M48 Patton", ua:"Об'єкт 140 + M48 Patton", en:"Object 140 + M48 Patton"},
+{ru:"K-91 + M48 Patton", ua:"K-91 + M48 Patton", en:"K-91 + M48 Patton"},
+{ru:"Т-100 ЛТ + M48 Patton", ua:"Т-100 ЛТ + M48 Patton", en:"Т-100 ЛТ + M48 Patton"},
+{ru:"T110E3 + Canopenner", ua:"T110E3 + Canopenner", en:"T110E3 + Canopenner"},
+{ru:"T110E4 + Canopenner", ua:"T110E4 + Canopenner", en:"T110E4 + Canopenner"},
+{ru:"Sheridan + Canopenner", ua:"Sheridan + Canopenner", en:"Sheridan + Canopenner"},
+{ru:"Foch B + Canopenner", ua:"Foch B + Canopenner", en:"Foch B + Canopenner"},
+{ru:"AMX 50 B + Canopenner", ua:"AMX 50 B + Canopenner", en:"AMX 50 B + Canopenner"},
+{ru:"AMX M4 54 + Canopenner", ua:"AMX M4 54 + Canopenner", en:"AMX M4 54 + Canopenner"},
+{ru:"B-C 25 t + Canopenner", ua:"B-C 25 t + Canopenner", en:"B-C 25 t + Canopenner"},
+{ru:"AMX 13 105 + Canopenner", ua:"AMX 13 105 + Canopenner", en:"AMX 13 105 + Canopenner"},
+{ru:"EBR 105 + Canopenner", ua:"EBR 105 + Canopenner", en:"EBR 105 + Canopenner"},
+{ru:"FV 4005 + Canopenner", ua:"FV 4005 + Canopenner", en:"FV 4005 + Canopenner"},
+{ru:"Badger + Canopenner", ua:"Badger + Canopenner", en:"Badger + Canopenner"},
+{ru:"S.Conqueror + Canopenner", ua:"S.Conqueror + Canopenner", en:"S.Conqueror + Canopenner"},
+{ru:"Centurion AX + Canopenner", ua:"Centurion AX + Canopenner", en:"Centurion AX + Canopenner"},
+{ru:"Concept 5 + Canopenner", ua:"Concept 5 + Canopenner", en:"Concept 5 + Canopenner"},
+{ru:"Manticore + Canopenner", ua:"Manticore + Canopenner", en:"Manticore + Canopenner"},
+{ru:"WZ-113GFT + Canopenner", ua:"WZ-113GFT + Canopenner", en:"WZ-113GFT + Canopenner"},
+{ru:"BZ-75 + Canopenner", ua:"BZ-75 + Canopenner", en:"BZ-75 + Canopenner"},
+{ru:"WZ-111 5A + Canopenner", ua:"WZ-111 5A + Canopenner", en:"WZ-111 5A + Canopenner"},
+{ru:"121 + Canopenner", ua:"121 + Canopenner", en:"121 + Canopenner"},
+{ru:"WZ-132-1 + Canopenner", ua:"WZ-132-1 + Canopenner", en:"WZ-132-1 + Canopenner"},
+{ru:"Ho-Ri 3 + Canopenner", ua:"Ho-Ri 3 + Canopenner", en:"Ho-Ri 3 + Canopenner"},
+{ru:"Type 71 + Canopenner", ua:"Type 71 + Canopenner", en:"Type 71 + Canopenner"},
+{ru:"Type 5 H + Canopenner", ua:"Type 5 H + Canopenner", en:"Type 5 H + Canopenner"},
+{ru:"STB-1 + Canopenner", ua:"STB-1 + Canopenner", en:"STB-1 + Canopenner"},
+{ru:"VZ-55 + Canopenner", ua:"VZ-55 + Canopenner", en:"VZ-55 + Canopenner"},
+{ru:"TVP T 50/51 + Canopenner", ua:"TVP T 50/51 + Canopenner", en:"TVP T 50/51 + Canopenner"},
+{ru:"Blyskawica + Canopenner", ua:"Blyskawica + Canopenner", en:"Blyskawica + Canopenner"},
+{ru:"60TP + Canopenner", ua:"60TP + Canopenner", en:"60TP + Canopenner"},
+{ru:"CS-63 + Canopenner", ua:"CS-63 + Canopenner", en:"CS-63 + Canopenner"},
+{ru:"Kranvagn + Canopenner", ua:"Kranvagn + Canopenner", en:"Kranvagn + Canopenner"},
+{ru:"UDES 15/16 + Canopenner", ua:"UDES 15/16 + Canopenner", en:"UDES 15/16 + Canopenner"},
+{ru:"Minotauro + Canopenner", ua:"Minotauro + Canopenner", en:"Minotauro + Canopenner"},
+{ru:"Rinoceronte + Canopenner", ua:"Rinoceronte + Canopenner", en:"Rinoceronte + Canopenner"},
+{ru:"Progetto 65 + Canopenner", ua:"Progetto 65 + Canopenner", en:"Progetto 65 + Canopenner"},
+{ru:"Jg.Pz.E 100 + Maus", ua:"Jg.Pz.E 100 + Maus", en:"Jg.Pz.E 100 + Maus"},
+{ru:"Grille 15 + Maus", ua:"Grille 15 + Maus", en:"Grille 15 + Maus"},
+{ru:"E 100 + Maus", ua:"E 100 + Maus", en:"E 100 + Maus"},
+{ru:"E 50 M + Maus", ua:"E 50 M + Maus", en:"E 50 M + Maus"},
+{ru:"Leopard 1 + Maus", ua:"Leopard 1 + Maus", en:"Leopard 1 + Maus"},
+{ru:"Rhm.Pzw + Maus", ua:"Rhm.Pzw + Maus", en:"Rhm.Pzw + Maus"},
+{ru:"Объект 268/4 + Maus", ua:"Об'єкт 268/4 + Maus", en:"Object 268/4 + Maus"},
+{ru:"Объект 268 + Maus", ua:"Об'єкт 268 + Maus", en:"Object 268 + Maus"},
+{ru:"Объект 277 + Maus", ua:"Об'єкт 277 + Maus", en:"Object 277 + Maus"},
+{ru:"Объект 705А + Maus", ua:"Об'єкт 705А + Maus", en:"Object 705А + Maus"},
+{ru:"ИС-4 + Maus", ua:"ЙС-4 + Maus", en:"ИС-4 + Maus"},
+{ru:"СТ-II + Maus", ua:"СТ-II + Maus", en:"СТ-II + Maus"},
+{ru:"Объект.430У + Maus", ua:"Об'єкт.430У + Maus", en:"Object.430У + Maus"},
+{ru:"Объект 140 + Maus", ua:"Об'єкт 140 + Maus", en:"Object 140 + Maus"},
+{ru:"K-91 + Maus", ua:"K-91 + Maus", en:"K-91 + Maus"},
+{ru:"Т-100 ЛТ + Maus", ua:"Т-100 ЛТ + Maus", en:"Т-100 ЛТ + Maus"},
+{ru:"T110E3 + Maus", ua:"T110E3 + Maus", en:"T110E3 + Maus"},
+{ru:"T110E4 + Maus", ua:"T110E4 + Maus", en:"T110E4 + Maus"},
+{ru:"M-V-Y + Maus", ua:"M-V-Y + Maus", en:"M-V-Y + Maus"},
+{ru:"T110E5 + Maus", ua:"T110E5 + Maus", en:"T110E5 + Maus"},
+{ru:"T57 Heavy + Maus", ua:"T57 Heavy + Maus", en:"T57 Heavy + Maus"},
+{ru:"Sheridan + Maus", ua:"Sheridan + Maus", en:"Sheridan + Maus"},
+{ru:"Foch B + Maus", ua:"Foch B + Maus", en:"Foch B + Maus"},
+{ru:"AMX 50 B + Maus", ua:"AMX 50 B + Maus", en:"AMX 50 B + Maus"},
+{ru:"AMX M4 54 + Maus", ua:"AMX M4 54 + Maus", en:"AMX M4 54 + Maus"},
+{ru:"B-C 25 t + Maus", ua:"B-C 25 t + Maus", en:"B-C 25 t + Maus"},
+{ru:"AMX 13 105 + Maus", ua:"AMX 13 105 + Maus", en:"AMX 13 105 + Maus"},
+{ru:"EBR 105 + Maus", ua:"EBR 105 + Maus", en:"EBR 105 + Maus"},
+{ru:"FV 4005 + Maus", ua:"FV 4005 + Maus", en:"FV 4005 + Maus"},
+{ru:"Badger + Maus", ua:"Badger + Maus", en:"Badger + Maus"},
+{ru:"S.Conqueror + Maus", ua:"S.Conqueror + Maus", en:"S.Conqueror + Maus"},
+{ru:"Canopenner + Maus", ua:"Canopenner + Maus", en:"Canopenner + Maus"},
+{ru:"Centurion AX + Maus", ua:"Centurion AX + Maus", en:"Centurion AX + Maus"},
+{ru:"Concept 5 + Maus", ua:"Concept 5 + Maus", en:"Concept 5 + Maus"},
+{ru:"Manticore + Maus", ua:"Manticore + Maus", en:"Manticore + Maus"},
+{ru:"WZ-113GFT + Maus", ua:"WZ-113GFT + Maus", en:"WZ-113GFT + Maus"},
+{ru:"BZ-75 + Maus", ua:"BZ-75 + Maus", en:"BZ-75 + Maus"},
+{ru:"WZ-111 5A + Maus", ua:"WZ-111 5A + Maus", en:"WZ-111 5A + Maus"},
+{ru:"121 + Maus", ua:"121 + Maus", en:"121 + Maus"},
+{ru:"WZ-132-1 + Maus", ua:"WZ-132-1 + Maus", en:"WZ-132-1 + Maus"},
+{ru:"Ho-Ri 3 + Maus", ua:"Ho-Ri 3 + Maus", en:"Ho-Ri 3 + Maus"},
+{ru:"Type 5 H + Maus", ua:"Type 5 H + Maus", en:"Type 5 H + Maus"},
+{ru:"STB-1 + Maus", ua:"STB-1 + Maus", en:"STB-1 + Maus"},
+{ru:"VZ-55 + Maus", ua:"VZ-55 + Maus", en:"VZ-55 + Maus"},
+{ru:"TVP T 50/51 + Maus", ua:"TVP T 50/51 + Maus", en:"TVP T 50/51 + Maus"},
+{ru:"Tesak + Maus", ua:"Tesak + Maus", en:"Tesak + Maus"},
+{ru:"Blyskawica + Maus", ua:"Blyskawica + Maus", en:"Blyskawica + Maus"},
+{ru:"60TP + Maus", ua:"60TP + Maus", en:"60TP + Maus"},
+{ru:"Strv 103B + Maus", ua:"Strv 103B + Maus", en:"Strv 103B + Maus"},
+{ru:"Kranvagn + Maus", ua:"Kranvagn + Maus", en:"Kranvagn + Maus"},
+{ru:"UDES 15/16 + Maus", ua:"UDES 15/16 + Maus", en:"UDES 15/16 + Maus"},
+{ru:"Minotauro + Maus", ua:"Minotauro + Maus", en:"Minotauro + Maus"},
+{ru:"Rinoceronte + Maus", ua:"Rinoceronte + Maus", en:"Rinoceronte + Maus"},
+{ru:"Progetto 65 + Maus", ua:"Progetto 65 + Maus", en:"Progetto 65 + Maus"},
+{ru:"Grille 15 + BZ-75", ua:"Grille 15 + BZ-75", en:"Grille 15 + BZ-75"},
+{ru:"Jg.Pz.E 100 + BZ-75", ua:"Jg.Pz.E 100 + BZ-75", en:"Jg.Pz.E 100 + BZ-75"},
+{ru:"Maus + BZ-75", ua:"Maus + BZ-75", en:"Maus + BZ-75"},
+{ru:"E 100 + BZ-75", ua:"E 100 + BZ-75", en:"E 100 + BZ-75"},
+{ru:"E 50 M + BZ-75", ua:"E 50 M + BZ-75", en:"E 50 M + BZ-75"},
+{ru:"Leopard 1 + BZ-75", ua:"Leopard 1 + BZ-75", en:"Leopard 1 + BZ-75"},
+{ru:"Rhm.Pzw + BZ-75", ua:"Rhm.Pzw + BZ-75", en:"Rhm.Pzw + BZ-75"},
+{ru:"Объект 268/4 + BZ-75", ua:"Об'єкт 268/4 + BZ-75", en:"Object 268/4 + BZ-75"},
+{ru:"Объект 268 + BZ-75", ua:"Об'єкт 268 + BZ-75", en:"Object 268 + BZ-75"},
+{ru:"Объект 705А + BZ-75", ua:"Об'єкт 705А + BZ-75", en:"Object 705A + BZ-75"},
+{ru:"ИС-4 + BZ-75", ua:"ІС-4 + BZ-75", en:"IS-4 + BZ-75"},
+{ru:"СТ-II + BZ-75", ua:"СТ-II + BZ-75", en:"ST-II + BZ-75"},
+{ru:"Объект.430У + BZ-75", ua:"Об'єкт 430У + BZ-75", en:"Object 430U + BZ-75"},
+{ru:"Объект 140 + BZ-75", ua:"Об'єкт 140 + BZ-75", en:"Object 140 + BZ-75"},
+{ru:"K-91 + BZ-75", ua:"K-91 + BZ-75", en:"K-91 + BZ-75"},
+{ru:"Т-100 ЛТ + BZ-75", ua:"Т-100 ЛТ + BZ-75", en:"T-100 LT + BZ-75"},
+{ru:"T110E3 + BZ-75", ua:"T110E3 + BZ-75", en:"T110E3 + BZ-75"},
+{ru:"T110E4 + BZ-75", ua:"T110E4 + BZ-75", en:"T110E4 + BZ-75"},
+{ru:"M-V-Y + BZ-75", ua:"M-V-Y + BZ-75", en:"M-V-Y + BZ-75"},
+{ru:"T110E5 + BZ-75", ua:"T110E5 + BZ-75", en:"T110E5 + BZ-75"},
+{ru:"T57 Heavy + BZ-75", ua:"T57 Heavy + BZ-75", en:"T57 Heavy + BZ-75"},
+{ru:"Sheridan + BZ-75", ua:"Sheridan + BZ-75", en:"Sheridan + BZ-75"},
+{ru:"Foch B + BZ-75", ua:"Foch B + BZ-75", en:"Foch B + BZ-75"},
+{ru:"AMX 50 B + BZ-75", ua:"AMX 50 B + BZ-75", en:"AMX 50 B + BZ-75"},
+{ru:"AMX M4 54 + BZ-75", ua:"AMX M4 54 + BZ-75", en:"AMX M4 54 + BZ-75"},
+{ru:"B-C 25 t + BZ-75", ua:"B-C 25 t + BZ-75", en:"B-C 25 t + BZ-75"},
+{ru:"AMX 13 105 + BZ-75", ua:"AMX 13 105 + BZ-75", en:"AMX 13 105 + BZ-75"},
+{ru:"EBR 105 + BZ-75", ua:"EBR 105 + BZ-75", en:"EBR 105 + BZ-75"},
+{ru:"FV 4005 + BZ-75", ua:"FV 4005 + BZ-75", en:"FV 4005 + BZ-75"},
+{ru:"Badger + BZ-75", ua:"Badger + BZ-75", en:"Badger + BZ-75"},
+{ru:"S.Conqueror + BZ-75", ua:"S.Conqueror + BZ-75", en:"S.Conqueror + BZ-75"},
+{ru:"Centurion AX + BZ-75", ua:"Centurion AX + BZ-75", en:"Centurion AX + BZ-75"},
+{ru:"Concept 5 + BZ-75", ua:"Concept 5 + BZ-75", en:"Concept 5 + BZ-75"},
+{ru:"Manticore + BZ-75", ua:"Manticore + BZ-75", en:"Manticore + BZ-75"},
+{ru:"WZ-113GFT + BZ-75", ua:"WZ-113GFT + BZ-75", en:"WZ-113GFT + BZ-75"},
+{ru:"WZ-111 5A + BZ-75", ua:"WZ-111 5A + BZ-75", en:"WZ-111 5A + BZ-75"},
+{ru:"121 + BZ-75", ua:"121 + BZ-75", en:"121 + BZ-75"},
+{ru:"WZ-132-1 + BZ-75", ua:"WZ-132-1 + BZ-75", en:"WZ-132-1 + BZ-75"},
+{ru:"Ho-Ri 3 + BZ-75", ua:"Ho-Ri 3 + BZ-75", en:"Ho-Ri 3 + BZ-75"},
+{ru:"Type 71 + BZ-75", ua:"Type 71 + BZ-75", en:"Type 71 + BZ-75"},
+{ru:"Type 5 H + BZ-75", ua:"Type 5 H + BZ-75", en:"Type 5 H + BZ-75"},
+{ru:"STB-1 + BZ-75", ua:"STB-1 + BZ-75", en:"STB-1 + BZ-75"},
+{ru:"TVP T 50/51 + BZ-75", ua:"TVP T 50/51 + BZ-75", en:"TVP T 50/51 + BZ-75"},
+{ru:"Tesak + BZ-75", ua:"Tesak + BZ-75", en:"Tesak + BZ-75"},
+{ru:"Blyskawica + BZ-75", ua:"Blyskawica + BZ-75", en:"Blyskawica + BZ-75"},
+{ru:"60TP + BZ-75", ua:"60TP + BZ-75", en:"60TP + BZ-75"},
+{ru:"CS-63 + BZ-75", ua:"CS-63 + BZ-75", en:"CS-63 + BZ-75"},
+{ru:"Strv 103B + BZ-75", ua:"Strv 103B + BZ-75", en:"Strv 103B + BZ-75"},
+{ru:"Kranvagn + BZ-75", ua:"Kranvagn + BZ-75", en:"Kranvagn + BZ-75"},
+{ru:"UDES 15/16 + BZ-75", ua:"UDES 15/16 + BZ-75", en:"UDES 15/16 + BZ-75"},
+{ru:"Rinoceronte + BZ-75", ua:"Rinoceronte + BZ-75", en:"Rinoceronte + BZ-75"},
+{ru:"Progetto 65 + BZ-75", ua:"Progetto 65 + BZ-75", en:"Progetto 65 + BZ-75"},
+{ru:"Jg.Pz.E 100 + Type 5 H", ua:"Jg.Pz.E 100 + Type 5 H", en:"Jg.Pz.E 100 + Type 5 H"},
+{ru:"Grille 15 + Type 5 H", ua:"Grille 15 + Type 5 H", en:"Grille 15 + Type 5 H"},
+{ru:"Maus + Type 5 H", ua:"Maus + Type 5 H", en:"Maus + Type 5 H"},
+{ru:"E 100 + Type 5 H", ua:"E 100 + Type 5 H", en:"E 100 + Type 5 H"},
+{ru:"E 50 M + Type 5 H", ua:"E 50 M + Type 5 H", en:"E 50 M + Type 5 H"},
+{ru:"Leopard 1 + Type 5 H", ua:"Leopard 1 + Type 5 H", en:"Leopard 1 + Type 5 H"},
+{ru:"Rhm.Pzw + Type 5 H", ua:"Rhm.Pzw + Type 5 H", en:"Rhm.Pzw + Type 5 H"},
+{ru:"Объект 268/4 + Type 5 H", ua:"Об'єкт 268/4 + Type 5 H", en:"Object 268/4 + Type 5 H"},
+{ru:"Объект 268 + Type 5 H", ua:"Об'єкт 268 + Type 5 H", en:"Object 268 + Type 5 H"},
+{ru:"Объект 277 + Type 5 H", ua:"Об'єкт 277 + Type 5 H", en:"Object 277 + Type 5 H"},
+{ru:"ИС-7 + Type 5 H", ua:"ІС-7 + Type 5 H", en:"IS-7 + Type 5 H"},
+{ru:"Объект 705А + Type 5 H", ua:"Об'єкт 705A + Type 5 H", en:"Object 705A + Type 5 H"},
+{ru:"ИС-4 + Type 5 H", ua:"ІС-4 + Type 5 H", en:"IS-4 + Type 5 H"},
+{ru:"СТ-II + Type 5 H", ua:"СТ-II + Type 5 H", en:"ST-II + Type 5 H"},
+{ru:"Объект.430У + Type 5 H", ua:"Об'єкт 430У + Type 5 H", en:"Object 430U + Type 5 H"},
+{ru:"Объект 140 + Type 5 H", ua:"Об'єкт 140 + Type 5 H", en:"Object 140 + Type 5 H"},
+{ru:"K-91 + Type 5 H", ua:"K-91 + Type 5 H", en:"K-91 + Type 5 H"},
+{ru:"T110E3 + Type 5 H", ua:"T110E3 + Type 5 H", en:"T110E3 + Type 5 H"},
+{ru:"T110E4 + Type 5 H", ua:"T110E4 + Type 5 H", en:"T110E4 + Type 5 H"},
+{ru:"M-V-Y + Type 5 H", ua:"M-V-Y + Type 5 H", en:"M-V-Y + Type 5 H"},
+{ru:"T57 Heavy + Type 5 H", ua:"T57 Heavy + Type 5 H", en:"T57 Heavy + Type 5 H"},
+{ru:"M48 Patton + Type 5 H", ua:"M48 Patton + Type 5 H", en:"M48 Patton + Type 5 H"},
+{ru:"Sheridan + Type 5 H", ua:"Sheridan + Type 5 H", en:"Sheridan + Type 5 H"},
+{ru:"Foch B + Type 5 H", ua:"Foch B + Type 5 H", en:"Foch B + Type 5 H"},
+{ru:"AMX 50 B + Type 5 H", ua:"AMX 50 B + Type 5 H", en:"AMX 50 B + Type 5 H"},
+{ru:"AMX M4 54 + Type 5 H", ua:"AMX M4 54 + Type 5 H", en:"AMX M4 54 + Type 5 H"},
+{ru:"B-C 25 t + Type 5 H", ua:"B-C 25 t + Type 5 H", en:"B-C 25 t + Type 5 H"},
+{ru:"AMX 13 105 + Type 5 H", ua:"AMX 13 105 + Type 5 H", en:"AMX 13 105 + Type 5 H"},
+{ru:"EBR 105 + Type 5 H", ua:"EBR 105 + Type 5 H", en:"EBR 105 + Type 5 H"},
+{ru:"Badger + Type 5 H", ua:"Badger + Type 5 H", en:"Badger + Type 5 H"},
+{ru:"S.Conqueror + Type 5 H", ua:"S.Conqueror + Type 5 H", en:"S.Conqueror + Type 5 H"},
+{ru:"Canopenner + Type 5 H", ua:"Canopenner + Type 5 H", en:"Canopenner + Type 5 H"},
+{ru:"Centurion AX + Type 5 H", ua:"Centurion AX + Type 5 H", en:"Centurion AX + Type 5 H"},
+{ru:"Concept 5 + Type 5 H", ua:"Concept 5 + Type 5 H", en:"Concept 5 + Type 5 H"},
+{ru:"Manticore + Type 5 H", ua:"Manticore + Type 5 H", en:"Manticore + Type 5 H"},
+{ru:"WZ-113GFT + Type 5 H", ua:"WZ-113GFT + Type 5 H", en:"WZ-113GFT + Type 5 H"},
+{ru:"BZ-75 + Type 5 H", ua:"BZ-75 + Type 5 H", en:"BZ-75 + Type 5 H"},
+{ru:"WZ-111 5A + Type 5 H", ua:"WZ-111 5A + Type 5 H", en:"WZ-111 5A + Type 5 H"},
+{ru:"121 + Type 5 H", ua:"121 + Type 5 H", en:"121 + Type 5 H"},
+{ru:"Ho-Ri 3 + Type 5 H", ua:"Ho-Ri 3 + Type 5 H", en:"Ho-Ri 3 + Type 5 H"},
+{ru:"Type 71 + Type 5 H", ua:"Type 71 + Type 5 H", en:"Type 71 + Type 5 H"},
+{ru:"STB-1 + Type 5 H", ua:"STB-1 + Type 5 H", en:"STB-1 + Type 5 H"},
+{ru:"VZ-55 + Type 5 H", ua:"VZ-55 + Type 5 H", en:"VZ-55 + Type 5 H"},
+{ru:"TVP T 50/51 + Type 5 H", ua:"TVP T 50/51 + Type 5 H", en:"TVP T 50/51 + Type 5 H"},
+{ru:"Tesak + Type 5 H", ua:"Tesak + Type 5 H", en:"Tesak + Type 5 H"},
+{ru:"Blyskawica + Type 5 H", ua:"Blyskawica + Type 5 H", en:"Blyskawica + Type 5 H"},
+{ru:"CS-63 + Type 5 H", ua:"CS-63 + Type 5 H", en:"CS-63 + Type 5 H"},
+{ru:"Strv 103B + Type 5 H", ua:"Strv 103B + Type 5 H", en:"Strv 103B + Type 5 H"},
+{ru:"Kranvagn + Type 5 H", ua:"Kranvagn + Type 5 H", en:"Kranvagn + Type 5 H"},
+{ru:"Minotauro + Type 5 H", ua:"Minotauro + Type 5 H", en:"Minotauro + Type 5 H"},
+{ru:"Rinoceronte + Type 5 H", ua:"Rinoceronte + Type 5 H", en:"Rinoceronte + Type 5 H"},
+{ru:"Progetto 65 + Type 5 H", ua:"Progetto 65 + Type 5 H", en:"Progetto 65 + Type 5 H"},
+{ru:"Jg.Pz.E 100 + E 100", ua:"Jg.Pz.E 100 + E 100", en:"Jg.Pz.E 100 + E 100"},
+{ru:"Grille 15 + E 100", ua:"Grille 15 + E 100", en:"Grille 15 + E 100"},
+{ru:"Maus + E 100", ua:"Maus + E 100", en:"Maus + E 100"},
+{ru:"E 50 M + E 100", ua:"E 50 M + E 100", en:"E 50 M + E 100"},
+{ru:"Rhm.Pzw + E 100", ua:"Rhm.Pzw + E 100", en:"Rhm.Pzw + E 100"},
+{ru:"Объект 268/4 + E 100", ua:"Об'єкт 268/4 + E 100", en:"Object 268/4 + E 100"},
+{ru:"Объект 268 + E 100", ua:"Об'єкт 268 + E 100", en:"Object 268 + E 100"},
+{ru:"Объект 277 + E 100", ua:"Об'єкт 277 + E 100", en:"Object 277 + E 100"},
+{ru:"Объект 705А + E 100", ua:"Об'єкт 705А + E 100", en:"Object 705A + E 100"},
+{ru:"ИС-4 + E 100", ua:"ІС-4 + E 100", en:"IS-4 + E 100"},
+{ru:"СТ-II + E 100", ua:"СТ-II + E 100", en:"ST-II + E 100"},
+{ru:"Объект.430У + E 100", ua:"Об'єкт 430У + E 100", en:"Object 430U + E 100"},
+{ru:"Объект 140 + E 100", ua:"Об'єкт 140 + E 100", en:"Object 140 + E 100"},
+{ru:"K-91 + E 100", ua:"K-91 + E 100", en:"K-91 + E 100"},
+{ru:"Т-100 ЛТ + E 100", ua:"Т-100 ЛТ + E 100", en:"T-100 LT + E 100"},
+{ru:"T110E3 + E 100", ua:"T110E3 + E 100", en:"T110E3 + E 100"},
+{ru:"T110E4 + E 100", ua:"T110E4 + E 100", en:"T110E4 + E 100"},
+{ru:"M-V-Y + E 100", ua:"M-V-Y + E 100", en:"M-V-Y + E 100"},
+{ru:"T57 Heavy + E 100", ua:"T57 Heavy + E 100", en:"T57 Heavy + E 100"},
+{ru:"Sheridan + E 100", ua:"Sheridan + E 100", en:"Sheridan + E 100"},
+{ru:"Foch B + E 100", ua:"Foch B + E 100", en:"Foch B + E 100"},
+{ru:"AMX 50 B + E 100", ua:"AMX 50 B + E 100", en:"AMX 50 B + E 100"},
+{ru:"AMX M4 54 + E 100", ua:"AMX M4 54 + E 100", en:"AMX M4 54 + E 100"},
+{ru:"B-C 25 t + E 100", ua:"B-C 25 t + E 100", en:"B-C 25 t + E 100"},
+{ru:"AMX 13 105 + E 100", ua:"AMX 13 105 + E 100", en:"AMX 13 105 + E 100"},
+{ru:"EBR 105 + E 100", ua:"EBR 105 + E 100", en:"EBR 105 + E 100"},
+{ru:"Leopard 1 + E 100", ua:"Leopard 1 + E 100", en:"Leopard 1 + E 100"},
+{ru:"Badger + E 100", ua:"Badger + E 100", en:"Badger + E 100"},
+{ru:"S.Conqueror + E 100", ua:"S.Conqueror + E 100", en:"S.Conqueror + E 100"},
+{ru:"Centurion AX + E 100", ua:"Centurion AX + E 100", en:"Centurion AX + E 100"},
+{ru:"Concept 5 + E 100", ua:"Concept 5 + E 100", en:"Concept 5 + E 100"},
+{ru:"Manticore + E 100", ua:"Manticore + E 100", en:"Manticore + E 100"},
+{ru:"WZ-113GFT + E 100", ua:"WZ-113GFT + E 100", en:"WZ-113GFT + E 100"},
+{ru:"BZ-75 + E 100", ua:"BZ-75 + E 100", en:"BZ-75 + E 100"},
+{ru:"WZ-111 5A + E 100", ua:"WZ-111 5A + E 100", en:"WZ-111 5A + E 100"},
+{ru:"121 + E 100", ua:"121 + E 100", en:"121 + E 100"},
+{ru:"WZ-132-1 + E 100", ua:"WZ-132-1 + E 100", en:"WZ-132-1 + E 100"},
+{ru:"Ho-Ri 3 + E 100", ua:"Ho-Ri 3 + E 100", en:"Ho-Ri 3 + E 100"},
+{ru:"Type 71 + E 100", ua:"Type 71 + E 100", en:"Type 71 + E 100"},
+{ru:"Type 5 H + E 100", ua:"Type 5 H + E 100", en:"Type 5 H + E 100"},
+{ru:"STB-1 + E 100", ua:"STB-1 + E 100", en:"STB-1 + E 100"},
+{ru:"VZ-55 + E 100", ua:"VZ-55 + E 100", en:"VZ-55 + E 100"},
+{ru:"TVP T 50/51 + E 100", ua:"TVP T 50/51 + E 100", en:"TVP T 50/51 + E 100"},
+{ru:"Tesak + E 100", ua:"Tesak + E 100", en:"Tesak + E 100"},
+{ru:"Blyskawica + E 100", ua:"Blyskawica + E 100", en:"Blyskawica + E 100"},
+{ru:"60TP + E 100", ua:"60TP + E 100", en:"60TP + E 100"},
+{ru:"CS-63 + E 100", ua:"CS-63 + E 100", en:"CS-63 + E 100"},
+{ru:"Strv 103B + E 100", ua:"Strv 103B + E 100", en:"Strv 103B + E 100"},
+{ru:"Kranvagn + E 100", ua:"Kranvagn + E 100", en:"Kranvagn + E 100"},
+{ru:"UDES 15/16 + E 100", ua:"UDES 15/16 + E 100", en:"UDES 15/16 + E 100"},
+{ru:"Minotauro + E 100", ua:"Minotauro + E 100", en:"Minotauro + E 100"},
+{ru:"Rinoceronte + E 100", ua:"Rinoceronte + E 100", en:"Rinoceronte + E 100"},
+{ru:"Progetto 65 + E 100", ua:"Progetto 65 + E 100", en:"Progetto 65 + E 100"},
+{ru:"E 100 + Leopard 1", ua:"E 100 + Leopard 1", en:"E 100 + Leopard 1"},
+{ru:"Объект 268/4 + Leopard 1", ua:"Об'єкт 268/4 + Leopard 1", en:"Object 268/4 + Leopard 1"},
+{ru:"Объект 277 + Leopard 1", ua:"Об'єкт 277 + Leopard 1", en:"Object 277 + Leopard 1"},
+{ru:"ИС-4 + Leopard 1", ua:"ІС-4 + Leopard 1", en:"IS-4 + Leopard 1"},
+{ru:"СТ-II + Leopard 1", ua:"СТ-II + Leopard 1", en:"ST-II + Leopard 1"},
+{ru:"Объект.430У + Leopard 1", ua:"Об'єкт 430У + Leopard 1", en:"Object 430U + Leopard 1"},
+{ru:"T110E3 + Leopard 1", ua:"T110E3 + Leopard 1", en:"T110E3 + Leopard 1"},
+{ru:"T110E4 + Leopard 1", ua:"T110E4 + Leopard 1", en:"T110E4 + Leopard 1"},
+{ru:"T57 Heavy + Leopard 1", ua:"T57 Heavy + Leopard 1", en:"T57 Heavy + Leopard 1"},
+{ru:"AMX M4 54 + Leopard 1", ua:"AMX M4 54 + Leopard 1", en:"AMX M4 54 + Leopard 1"},
+{ru:"Leopard 1 + Leopard 1", ua:"Leopard 1 + Leopard 1", en:"Leopard 1 + Leopard 1"},
+{ru:"Canopenner + Leopard 1", ua:"Canopenner + Leopard 1", en:"Canopenner + Leopard 1"},
+{ru:"BZ-75 + Leopard 1", ua:"BZ-75 + Leopard 1", en:"BZ-75 + Leopard 1"},
+{ru:"WZ-111 5A + Leopard 1", ua:"WZ-111 5A + Leopard 1", en:"WZ-111 5A + Leopard 1"},
+{ru:"Ho-Ri 3 + Leopard 1", ua:"Ho-Ri 3 + Leopard 1", en:"Ho-Ri 3 + Leopard 1"},
+{ru:"Type 5 H + Leopard 1", ua:"Type 5 H + Leopard 1", en:"Type 5 H + Leopard 1"},
+{ru:"60TP + Leopard 1", ua:"60TP + Leopard 1", en:"60TP + Leopard 1"},
+{ru:"Kranvagn + Leopard 1", ua:"Kranvagn + Leopard 1", en:"Kranvagn + Leopard 1"},
+{ru:"Rinoceronte + Leopard 1", ua:"Rinoceronte + Leopard 1", en:"Rinoceronte + Leopard 1"},
+{ru:"ИС-7 + Leopard 1", ua:"ІС-7 + Leopard 1", en:"IS-7 + Leopard 1"},
+{ru:"E 50 M + Leopard 1", ua:"E 50 M + Leopard 1", en:"E 50 M + Leopard 1"},
+{ru:"Объект 277 + FV 4005", ua:"Об'єкт 277 + FV 4005", en:"Object 277 + FV 4005"},
+{ru:"ИС-4 + FV 4005", ua:"ІС-4 + FV 4005", en:"IS-4 + FV 4005"},
+{ru:"СТ-II + FV 4005", ua:"СТ-II + FV 4005", en:"ST-II + FV 4005"},
+{ru:"Объект.430У + FV 4005", ua:"Об'єкт 430У + FV 4005", en:"Object 430U + FV 4005"},
+{ru:"T110E3 + FV 4005", ua:"T110E3 + FV 4005", en:"T110E3 + FV 4005"},
+{ru:"T110E4 + FV 4005", ua:"T110E4 + FV 4005", en:"T110E4 + FV 4005"},
+{ru:"EBR 105 + FV 4005", ua:"EBR 105 + FV 4005", en:"EBR 105 + FV 4005"},
+{ru:"Объект 268/4 + FV 4005", ua:"Об'єкт 268/4 + FV 4005", en:"Object 268/4 + FV 4005"},
+{ru:"Maus + FV 4005", ua:"Maus + FV 4005", en:"Maus + FV 4005"},
+{ru:"Объект 140 + FV 4005", ua:"Об'єкт 140 + FV 4005", en:"Object 140 + FV 4005"},
+{ru:"Объект 705А + FV 4005", ua:"Об'єкт 705А + FV 4005", en:"Object 705A + FV 4005"},
+{ru:"T110E4 + FV 4005", ua:"T110E4 + FV 4005", en:"T110E4 + FV 4005"},
+{ru:"Ho-Ri 3 + FV 4005", ua:"Ho-Ri 3 + FV 4005", en:"Ho-Ri 3 + FV 4005"},
+{ru:"Badger + FV 4005", ua:"Badger + FV 4005", en:"Badger + FV 4005"},
+{ru:"60TP + Type 5 H", ua:"60TP + Type 5 H", en:"60TP + Type 5 H"},
+{ru:"BADGER + Rhm.Pzw", ua:"BADGER + Rhm.Pzw", en:"BADGER + Rhm.Pzw"},
+{ru:"B-C 25 t + Maus", ua:"B-C 25 t + Maus", en:"B-C 25 t + Maus"},
+{ru:"Canopenner + BZ-75", ua:"Canopenner + BZ-75", en:"Canopenner + BZ-75"},
+{ru:"CS-63 + Maus", ua:"CS-63 + Maus", en:"CS-63 + Maus"},
+{ru:"E 50M + Maus", ua:"E 50M + Maus", en:"E 50M + Maus"},
+{ru:"ИС-7 + Maus", ua:"ІС-7 + Maus", en:"IS-7 + Maus"},
+{ru:"M48 Patton + BZ-75", ua:"M48 Patton + BZ-75", en:"M48 Patton + BZ-75"},
+{ru:"Maus + BZ-75", ua:"Maus + BZ-75", en:"Maus + BZ-75"},
+{ru:"VZ-55 + BZ-75", ua:"VZ-55 + BZ-75", en:"VZ-55 + BZ-75"},
+{ru:"UDES 15/16 + Type 5 H", ua:"UDES 15/16 + Type 5 H", en:"UDES 15/16 + Type 5 H"},
+{ru:"T110E5 + BZ + 75", ua:"T110E5 + BZ + 75", en:"T110E5 + BZ + 75"},
+{ru:"Объект + 277 + BZ-75", ua:"Об'єкт 277 + BZ-75", en:"Object 277 + BZ-75"},
+{ru:"M-V-Y + ИС-7", ua:"M-V-Y + ІС-7", en:"M-V-Y + IS-7"},
+{ru:"Minotauro + BZ-75", ua:"Minotauro + BZ-75", en:"Minotauro + BZ-75"}
+];
+
+let lang="ru";
+let page=1;
+const PER_PAGE=28;
+
+const grid=document.getElementById("grid");
+const pager=document.getElementById("pager");
+const search=document.getElementById("search");
+const counter=document.getElementById("counter");
+const toast=document.getElementById("toast");
+
+function toastShow(text){
+  toast.textContent=text;
+  toast.classList.add("show");
+  setTimeout(()=>toast.classList.remove("show"),1200);
+}
+
+function render(){
+  document.getElementById("title").textContent=UI[lang].title;
+  search.placeholder=UI[lang].search;
+
+  document.querySelectorAll(".lang button").forEach(b=>{
+    b.classList.toggle("active",b.dataset.lang===lang);
+  });
+
+  const q=search.value.toLowerCase();
+  const filtered=DATA.filter(v=>v[lang].toLowerCase().includes(q));
+
+  const pages=Math.max(1,Math.ceil(filtered.length/PER_PAGE));
+  if(page>pages) page=pages;
+
+  const start=(page-1)*PER_PAGE;
+  const list=filtered.slice(start,start+PER_PAGE);
+
+  grid.innerHTML="";
+  list.forEach(v=>{
+    const c=document.createElement("div");
+    c.className="card";
+    c.innerHTML=`<span>${v[lang]}</span>`;
+    c.onclick=()=>{
+      navigator.clipboard.writeText(v[lang]);
+      toastShow(UI[lang].copied);
+    };
+    grid.appendChild(c);
+  });
+
+  pager.innerHTML="";
+  for(let i=1;i<=pages;i++){
+    const b=document.createElement("button");
+    b.textContent=i;
+    if(i===page) b.classList.add("active");
+    b.onclick=()=>{page=i;render()};
+    pager.appendChild(b);
+  }
+
+  counter.textContent =
+    UI[lang].shown(list.length, filtered.length) +
+    ` • ${page}/${pages}`;
+}
+
+search.oninput=()=>{page=1;render()};
+document.querySelectorAll(".lang button").forEach(b=>{
+  b.onclick=()=>{lang=b.dataset.lang;render()};
+});
+
+render();
+</script>
+
+</body>
+</html>
